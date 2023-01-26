@@ -1,0 +1,23 @@
+from MyPyQt5 import BaseScrapingClassQt5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
