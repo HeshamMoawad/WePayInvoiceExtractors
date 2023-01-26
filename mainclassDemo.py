@@ -280,56 +280,54 @@ class WePay(QObject):
         InvoiceResult['TimeOfInvoice'] = int(Invoice['ConsumptionEnd']["Month"]-Invoice['ConsumptionStart']["Month"])+1
         InvoiceResult['BillDateClient'] = f"{Invoice['BillDateClient']['Day']}-{Invoice['BillDateClient']['Month']}-{Invoice['BillDateClient']['Year']}"
         InvoiceResult['TotalAmount'] = Invoice['TotalAmount']
+        InvoiceResult['SubscribtionEnd'] = f"{Invoice['SubscribtionEnd']['Day']}-{Invoice['SubscribtionEnd']['Month']}-{Invoice['SubscribtionEnd']['Year']}"
         return InvoiceResult
 
     def ScrapePhonesList(self,phoneslist:list):
 
-        # (phone , areacode)
+        # (areacode,phone)
         
         for areacode , phone in phoneslist :
             Leadform = []
             print(phone,areacode)
-            self.writeAreaCode(areacode)
-            self.writePhoneNumber(phone)
-            self.clickSearchButton()
-            if self.checkExistAccount():
-                Customer = self.filterCustomerData(
-                    Account = self.jscode.getAccountInfo() ,
-                    Customer = self.jscode.getCustomerInfo() ,
-                    )
-                if  phone in Customer['AssociatedTelephonesFormatted'] :
-                    Leadform.append(phone)
-                    
-                    print("\n-------------Accountconfirmedd------------------")
-                    
-                    if not self.Data.existCustomer(Customer['Account']):
-                        self.Data.addCustomer(**Customer)
-                        print("\n-------------AddedAccount to Database------------------")
-                    else :
-                        self.Data.updateCustomer(Customer['Account'],**Customer)
-                        print("\n-------------UpdatedAccount------------------")
-                    
-                    for Invoice in self.jscode.getInvoiceInfo():
-                        Invoice = self.filterInvoiceData(Invoice)
-                        if not self.Data.existInvoiceByID(Invoice['ID']):
-                            self.Data.addInvoice(**Invoice)
-                            #print("\n-------------add Invoice to Database------------------")
-                        else:
-                            pass
-                            #print("\n------------- Invoice already exist in Database------------------")
-                    Leadform.append(str(Customer['HasPreviousUnPaidInvoice']))
-                    Leadform.append(str(Invoice['BillDateClient']))
-                    Leadform.append(str(Invoice['TotalAmount']))
-                    self.Lead.emit(Leadform)
-                    print("\n------------- Signal sended------------------")
-
-                print("\n-------------Accountconfirm------------------")
-                print(Customer['PhoneNumber'])
-                print(phone)
-                print("\n--------------ended---------------")
-                self.backToInquiry()
-                print("\n--------------Backed---------------")
-
+            try:
+                self.writeAreaCode(areacode)
+                self.writePhoneNumber(phone)
+                self.clickSearchButton()
+                if self.checkExistAccount():
+                    Customer = self.filterCustomerData(
+                        Account = self.jscode.getAccountInfo() ,
+                        Customer = self.jscode.getCustomerInfo() ,
+                        )
+                    if  phone in Customer['AssociatedTelephonesFormatted'] :
+                        Leadform.append(areacode)
+                        Leadform.append(phone)                    
+                        if not self.Data.existCustomer(Customer['Account']):
+                            self.Data.addCustomer(**Customer)
+                        else :
+                            self.Data.updateCustomer(Customer['Account'],**Customer)
+                        InvoicesList = self.jscode.getInvoiceInfo()
+                        for Invoice in InvoicesList:
+                            Invoice = self.filterInvoiceData(Invoice)
+                            if not self.Data.existInvoiceByID(Invoice['ID']):
+                                self.Data.addInvoice(**Invoice)
+                            else:
+                                pass
+                        if  Customer['HasPreviousUnPaidInvoice'] :
+                            Leadform.append(str(Customer['HasPreviousUnPaidInvoice']))
+                            Leadform.append(str(Invoice['BillDateClient']))
+                            Leadform.append(str(Invoice['SubscribtionEnd']))
+                            Leadform.append(str(Invoice['TotalAmount']))
+                        else : 
+                            Leadform = [areacode,phone,str(Customer['HasPreviousUnPaidInvoice']),"","",""]
+                        self.Lead.emit(Leadform)
+                    else:
+                        self.Lead.emit([areacode,phone,"NoAccount","NoAccount","NoAccount","NoAccount"])
+                    self.backToInquiry()
+                else :
+                    self.Lead.emit([areacode,phone,"NoAccount","NoAccount","NoAccount","NoAccount"])
+            except Exception as e :
+                print(f"\n Error in this Func {e}")
     def exit(self):
         #self.driver.quit()
         self.driver.close()

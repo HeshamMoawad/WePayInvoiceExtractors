@@ -1,7 +1,7 @@
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets , QtGui
 from MyPyQt5 import MyQTreeWidget , MyCustomContextMenu,MyMessageBox,MyThread,pyqtSignal
-import typing,datetime
+import typing,datetime,openpyxl,pandas,time
 from mainclassDemo import WePay
 
 
@@ -9,26 +9,30 @@ from mainclassDemo import WePay
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.msg = MyMessageBox()
-        MainWindow.resize(425, 457)
+        MainWindow.resize(600, 457)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(250, 80, 171, 41))
+        self.pushButton.setGeometry(QtCore.QRect(350, 80, 241, 41))
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(10, 80, 181, 41))
+        self.pushButton_2.setGeometry(QtCore.QRect(10, 80, 251, 41))
         self.toolButton = QtWidgets.QToolButton(self.centralwidget)
-        self.toolButton.setGeometry(QtCore.QRect(370, 20, 51, 21))
+        self.toolButton.setGeometry(QtCore.QRect(470, 20, 51, 21))
         self.toolButton.clicked.connect(self.dialog)
         self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit.setGeometry(QtCore.QRect(80, 20, 281, 20))
+        self.lineEdit.setGeometry(QtCore.QRect(180, 20, 281, 20))
         self.lineEdit.setReadOnly(True)
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(16, 20, 61, 21))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.label.setFont(font)
+        self.label.setGeometry(QtCore.QRect(50, 20, 61, 21))
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_2.setPlaceholderText("Defult: Sheet1")
-        self.lineEdit_2.setGeometry(QtCore.QRect(130, 50, 231, 20))
+        self.lineEdit_2.setGeometry(QtCore.QRect(230, 50, 231, 20))
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(10, 50, 111, 31))
+        self.label_2.setFont(font)
+        self.label_2.setGeometry(QtCore.QRect(45, 50, 111, 31))
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         # self.label_3 = QtWidgets.QLabel(self.centralwidget)
         # self.label_3.setGeometry(QtCore.QRect(200, 85, 41, 31))
@@ -40,8 +44,8 @@ class Ui_MainWindow(object):
         self.treeWidget = MyQTreeWidget(self.centralwidget,self.label_4)
         self.treeWidget.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
         self.treeWidget.customContextMenuRequested.connect(self.contextMenu)
-        self.treeWidget.setGeometry(QtCore.QRect(10, 130, 411, 301))
-        self.treeWidget.setColumns(["PhoneNumber","HasInvoice","Month","TotalAmount"])
+        self.treeWidget.setGeometry(QtCore.QRect(10, 130, 570, 301))
+        self.treeWidget.setColumns(["AreaCode","PhoneNumber","HasInvoice","InvoiceDate",'SubscribtionEnd',"TotalAmount"])
 
         self.Thread = Thread()
         self.Thread.setMainClass(self)
@@ -100,6 +104,17 @@ class Ui_MainWindow(object):
             filter=file_filter,
             )[0]
         self.lineEdit.setText(dir)
+    
+    def reshapeExelData(self,excelfile,sheetname):
+        wb = openpyxl.load_workbook(excelfile)
+        ws = wb[sheetname]
+        df = pandas.DataFrame(ws.values)
+        response = []
+        for row in df.index:
+            res = (f"{df.iloc[row][0]}",f"{df.iloc[row][1]}")
+            response.append(res)
+        return response[1:]
+
 
 
 class Thread(MyThread):
@@ -109,18 +124,28 @@ class Thread(MyThread):
     def run(self) -> None:
         if self.mainClass.lineEdit.text() != "":
             # self.mainClass.label_3.setStyleSheet("background-color: red;")
-            self.we = WePay()
-            self.we.Lead.connect(self.Lead.emit)
-            listOfPhones =  self.we.Data.reshapeExelData(
+            listOfPhones =  self.mainClass.reshapeExelData(
                 excelfile = self.mainClass.lineEdit.text() , 
                 sheetname = "Sheet1" if self.mainClass.lineEdit_2.text() == "" or self.mainClass.lineEdit_2.text() == " " else self.mainClass.lineEdit_2.text()
             )
+            listOfPhones = list(set(listOfPhones))
             print(listOfPhones)
-            
-            self.mainClass.lineEdit.clear()
-            self.we.ScrapePhonesList(listOfPhones)
-            self.we.exit()
-            # self.mainClass.label_3.setStyleSheet("background-color: green;")
+            old = 0
+            t1 = time.time()
+            for i in listOfPhones[::70]:
+                print(f'Starting with {listOfPhones[old:listOfPhones.index(i)]}')
+                if listOfPhones.index(i) == 0 :
+                    pass
+                else:
+                    self.we = WePay()
+                    self.we.Lead.connect(self.Lead.emit)
+                    #print(listOfPhones)
+                    self.mainClass.lineEdit.clear()
+                    self.we.ScrapePhonesList(listOfPhones[old:listOfPhones.index(i)])
+                    self.we.exit()
+                    old = listOfPhones.index(i)
+            t2 = time.time()
+            print(f"\n {t2-t1} Is Total time for make {len(listOfPhones)} number \n")
         return super().run()
 
 

@@ -1,10 +1,10 @@
-import pyvpn as vpn
+# import pyvpn as vpn
 
 
 
-vpnc = vpn.PyVpn(debug=False)
-vpnc.start
-print() 
+# vpnc = vpn.PyVpn(debug=False)
+# vpnc.start
+# print() 
 
 
 

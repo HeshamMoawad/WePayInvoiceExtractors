@@ -19,12 +19,33 @@ Invoice = [{'AccountNo': 'A4002323600', 'AreaCode': '002', 'BeingPaidStatus': 0,
 # print(m)
 
 
-import datetime 
-print(f"{datetime.datetime.now().date()} | {datetime.datetime.now().hour}:{datetime.datetime.now().minute}")
+# import datetime 
+# print(f"{datetime.datetime.now().date()} | {datetime.datetime.now().hour}:{datetime.datetime.now().minute}")
 
 
-from openpyxl import load_workbook
-import pandas as pd
+# from openpyxl import load_workbook
+# import pandas as pd
+
+
+
+h = [i for i in range(379)]
+
+
+print(len(h[::7]))
+oldindex = 0
+for i in h[::7]:
+    print(h[oldindex:i])
+    oldindex = i
+
+# print(h[0:7])
+# print(h[7:14])
+
+
+
+
+
+
+
 
 # Load workbook
 
