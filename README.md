@@ -15,8 +15,7 @@ Searching By (AreaCode , PhoneNumber)
 
 ## Frameworks 
 * [PyQt5](https://doc.qt.io/qtforpython/)   For Build GUI 
-* [Selenium](https://www.selenium.dev/)     For WebAutomation
-* [PyroGram](https://pyrogram.org/)         For Telegram Adding Methods  
+* [Selenium](https://www.selenium.dev/)     For WebAutomation 
 
 
 ## Made By K7_Team Hesham
