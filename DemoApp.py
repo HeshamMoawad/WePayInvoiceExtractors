@@ -3,18 +3,27 @@ from PyQt5 import QtCore, QtWidgets , QtGui
 from MyPyQt5 import MyQTreeWidget , MyCustomContextMenu,MyMessageBox,MyThread,pyqtSignal
 import typing,datetime,openpyxl,pandas,time
 from mainclassDemo import WePay
-
+import numpy as np
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow:QtWidgets.QMainWindow):
         self.msg = MyMessageBox()
         MainWindow.resize(600, 457)
+        MainWindow.setMaximumHeight(457)
+        MainWindow.setMinimumHeight(457)
+        MainWindow.setMaximumWidth(600)
+        MainWindow.setMinimumWidth(600)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(350, 80, 241, 41))
+        self.pushButton.setGeometry(QtCore.QRect(339, 80, 251, 41))
+        self.pushButton.setFont(font)
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(10, 80, 251, 41))
+        self.pushButton_2.setFont(font)
         self.toolButton = QtWidgets.QToolButton(self.centralwidget)
         self.toolButton.setGeometry(QtCore.QRect(470, 20, 51, 21))
         self.toolButton.clicked.connect(self.dialog)
@@ -22,8 +31,6 @@ class Ui_MainWindow(object):
         self.lineEdit.setGeometry(QtCore.QRect(180, 20, 281, 20))
         self.lineEdit.setReadOnly(True)
         self.label = QtWidgets.QLabel(self.centralwidget)
-        font = QtGui.QFont()
-        font.setPointSize(14)
         self.label.setFont(font)
         self.label.setGeometry(QtCore.QRect(50, 20, 61, 21))
         self.label.setAlignment(QtCore.Qt.AlignCenter)
@@ -34,27 +41,30 @@ class Ui_MainWindow(object):
         self.label_2.setFont(font)
         self.label_2.setGeometry(QtCore.QRect(45, 50, 111, 31))
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
-        # self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        # self.label_3.setGeometry(QtCore.QRect(200, 85, 41, 31))
-        # self.label_3.setStyleSheet("background-color: red;")
-        # self.label_3.setText("")
+        font.setPointSize(10)
         self.label_4 = QtWidgets.QLabel(self.centralwidget)
-        self.label_4.setGeometry(QtCore.QRect(190, 440, 100, 13))
+        self.label_4.setGeometry(QtCore.QRect(190, 430, 100, 25))
         self.label_4.setText(f"Count : 0")
+        self.label_4.setFont(font)
         self.treeWidget = MyQTreeWidget(self.centralwidget,self.label_4)
         self.treeWidget.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
         self.treeWidget.customContextMenuRequested.connect(self.contextMenu)
-        self.treeWidget.setGeometry(QtCore.QRect(10, 130, 570, 301))
+        self.treeWidget.setGeometry(QtCore.QRect(10, 130, 580, 301))
         self.treeWidget.setColumns(["AreaCode","PhoneNumber","HasInvoice","InvoiceDate",'SubscribtionEnd',"TotalAmount"])
-
+        self.statusLabel = QtWidgets.QLabel(self.centralwidget)
+        self.statusLabel.setText("Stopped")
+        self.statusLabel.setGeometry(QtCore.QRect(390, 430, 100, 25))
+        self.statusLabel.setFont(font)
         self.Thread = Thread()
         self.Thread.setMainClass(self)
+        self.Thread.msg.connect(self.msg.showInfo)
         self.Thread.Lead.connect(self.treeWidget.appendData)
+        self.Thread.statues.connect(self.statusLabel.setText)
         self.pushButton_2.clicked.connect(self.Thread.start)
-        self.pushButton.clicked.connect(self.Thread.kill)
+        self.pushButton.clicked.connect(lambda : self.Thread.kill(msg="يا عم بطل رخامة بقاا -_-"))
+
 
         MainWindow.setCentralWidget(self.centralwidget)
-
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -119,33 +129,42 @@ class Ui_MainWindow(object):
 
 class Thread(MyThread):
     Lead = pyqtSignal(list)
+    msg = pyqtSignal(str)
 
+    def setMainClass(self, mainClass: Ui_MainWindow):
+        self.mainClass = mainClass
 
     def run(self) -> None:
         if self.mainClass.lineEdit.text() != "":
-            # self.mainClass.label_3.setStyleSheet("background-color: red;")
+            self.statues.emit("Starting ...")
             listOfPhones =  self.mainClass.reshapeExelData(
                 excelfile = self.mainClass.lineEdit.text() , 
                 sheetname = "Sheet1" if self.mainClass.lineEdit_2.text() == "" or self.mainClass.lineEdit_2.text() == " " else self.mainClass.lineEdit_2.text()
             )
             listOfPhones = list(set(listOfPhones))
+            totalNumbers = len(listOfPhones)
+            myrange = listOfPhones[::70]
+            listOfPhones = np.array_split(listOfPhones,len(myrange))
             print(listOfPhones)
-            old = 0
             t1 = time.time()
-            for i in listOfPhones[::70]:
-                print(f'Starting with {listOfPhones[old:listOfPhones.index(i)]}')
-                if listOfPhones.index(i) == 0 :
+            for phones in listOfPhones:
+                print(f'Starting with {phones}') 
+                self.statues.emit("Opening Browser")                   
+                self.we = WePay()
+                self.we.Lead.connect(self.Lead.emit)
+                self.mainClass.lineEdit.clear()
+                try:
+                    self.statues.emit("Start Scraping ... ")
+                    self.we.ScrapePhonesList(phones)
+                    self.statues.emit("End Scraping ... ")
+                except Exception as e :
                     pass
-                else:
-                    self.we = WePay()
-                    self.we.Lead.connect(self.Lead.emit)
-                    #print(listOfPhones)
-                    self.mainClass.lineEdit.clear()
-                    self.we.ScrapePhonesList(listOfPhones[old:listOfPhones.index(i)])
-                    self.we.exit()
-                    old = listOfPhones.index(i)
+                self.we.exit()
+                self.statues.emit("Closing Browser")        
             t2 = time.time()
-            print(f"\n {t2-t1} Is Total time for make {len(listOfPhones)} number \n")
+            self.statues.emit("Stopped")        
+            print(f"\n {t2-t1} Is Total time for make {totalNumbers} number \n")
+            self.msg.emit(f"\n {round(t2-t1,ndigits=4)} Is Total time for make {totalNumbers} number \nنورتنا يا رجولة متجيش تانى بقاا ^_-")
         return super().run()
 
 
@@ -154,8 +173,9 @@ class Thread(MyThread):
             self.we.exit()
         except Exception as e :
             pass
-        # self.mainClass.label_3.setStyleSheet("background-color: red;")
-        return super().kill("Stopped")
+        super().kill("Stopped")
+        self.statues.emit("Stopped")        
+        self.msg.emit(msg) if msg != None else None
      
 
 

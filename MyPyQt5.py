@@ -1046,7 +1046,7 @@ class MyThread(QThread):
 
     def __init__(self) -> None:
         super().__init__()
-        self.msg = MyMessageBox()
+        
     def setMainClass(self,mainClass:BaseScrapingClassQt5):
         self.mainClass = mainClass
 
@@ -1055,8 +1055,6 @@ class MyThread(QThread):
         if self.isRunning():
             self.terminate()
             self.wait()
-            if msg:
-                self.msg.showInfo(text="سيبونا ناخد فرصتنا بقى")
 
     def start(self, priority: 'QThread.Priority' = ...) -> None:
         """Method to start Thread when it NotRunning"""

@@ -26,16 +26,37 @@ Invoice = [{'AccountNo': 'A4002323600', 'AreaCode': '002', 'BeingPaidStatus': 0,
 # from openpyxl import load_workbook
 # import pandas as pd
 
+import numpy as np
+
+h = [i for i in range(865)]
+print(len(h[::70]))
+
+l = np.array_split(h,len(h[::70]))
+print(l)
+print(len(l))
+
+m = 301.6271598339081
+print(round(m,ndigits=3))
 
 
-h = [i for i in range(379)]
 
+# print([-1])
+# oldindex = 0
+# l = []
 
-print(len(h[::7]))
-oldindex = 0
-for i in h[::7]:
-    print(h[oldindex:i])
-    oldindex = i
+# for i in h[::7]:
+#     #print(h[::7].index(i) == h[::7].index(h[::7][-1]))
+#     if h[::7].index(i) == h[::7].index(h[::7][-1]):
+#         print()#True
+#         l.append(h[oldindex:])
+#     else :
+#         l.append(h[oldindex:i])
+#     oldindex = i
+
+# print((l))
+#     last = len(h)
+
+# print(last)
 
 # print(h[0:7])
 # print(h[7:14])

@@ -230,14 +230,7 @@ class WePay(QObject):
     
     def backToInquiry(self):
         self.jscode.jscode("""document.querySelector("div[data-role='BackToInquiryIco']").click();""")
-        # try:
-        #     self.BackButton.click()
-        # except Exception as e :
-        #     #print(f"\n{e}\n")
-        #     self.BackButton = self.jscode.WaitingElement(
-        #         timeout = 3,
-        #         val="//a[@id='InquiryForAnotherAccount']")
-        #     self.BackButton.click()
+
 
     def checkExistAccount(self)->bool:
         try:
@@ -246,7 +239,6 @@ class WePay(QObject):
                 val = "//div[@data-role='CustomerInfo']")
             return True
         except Exception as e :
-            #print(f"\n{e}\n")
             return False
 
 
@@ -267,7 +259,6 @@ class WePay(QObject):
 
     def filterInvoiceData(self,Invoice:dict)-> dict:
         InvoiceResult = {}
-        #Invoice = {'AccountNo': 'A4002323600', 'AreaCode': '002', 'BeingPaidStatus': 0, 'BillDateClient': {'Day': 1, 'Hour': 0, 'Min': 0, 'Month': 6, 'Sec': 0, 'Year': 2022}, 'CategoryID': 78, 'ConsumptionEnd': {'Day':30, 'Hour': 0, 'Min': 0, 'Month': 5, 'Sec': 0, 'Year': 2022}, 'ConsumptionStart': {'Day': 1, 'Hour': 0, 'Min': 0, 'Month': 3, 'Sec': 0, 'Year': 2022}, 'Frequency': 0, 'ID': 'A4002323600202207', 'InquiryDate': '0001-01-01T00:00:00', 'InvoiceDetails': None, 'PFlag': '0', 'PaymentCollectionType': {'ID': -1, 'Name': '', 'NameAr': '', 'NameEn': ''}, 'PaymentDate': None, 'PaymentDateClient': None, 'PaymentGateName': '', 'PaymentGateNameAr': '', 'PaymentGateNameEn': None, 'PenaltyDate': '2023-01-25T00:00:00', 'PhoneNumber': '27038065','PreviousUnPaidInvoices': None, 'Status': 0, 'SubscribtionEnd': {'Day': 30, 'Hour': 0, 'Min': 0, 'Month': 8, 'Sec': 0, 'Year': 2022}, 'SubscribtionStart': {'Day': 1, 'Hour': 0, 'Min': 0, 'Month': 6, 'Sec': 0, 'Year': 2022}, 'TotalAmount': 75.75}#{}
         InvoiceResult['ID'] = Invoice['ID']
         InvoiceResult['Account'] = Invoice['AccountNo']
         InvoiceResult['PhoneNumber'] = Invoice['PhoneNumber']
@@ -284,96 +275,55 @@ class WePay(QObject):
         return InvoiceResult
 
     def ScrapePhonesList(self,phoneslist:list):
-
-        # (areacode,phone)
-        
         for areacode , phone in phoneslist :
             Leadform = []
             print(phone,areacode)
-            try:
-                self.writeAreaCode(areacode)
-                self.writePhoneNumber(phone)
-                self.clickSearchButton()
-                if self.checkExistAccount():
-                    Customer = self.filterCustomerData(
-                        Account = self.jscode.getAccountInfo() ,
-                        Customer = self.jscode.getCustomerInfo() ,
-                        )
-                    if  phone in Customer['AssociatedTelephonesFormatted'] :
-                        Leadform.append(areacode)
-                        Leadform.append(phone)                    
-                        if not self.Data.existCustomer(Customer['Account']):
+            self.writeAreaCode(areacode)
+            self.writePhoneNumber(phone)
+            self.clickSearchButton()
+            if self.checkExistAccount():
+                Customer = self.filterCustomerData(
+                    Account = self.jscode.getAccountInfo() ,
+                    Customer = self.jscode.getCustomerInfo() ,
+                    )
+                if  phone in Customer['AssociatedTelephonesFormatted'] :
+                    Leadform.append(areacode)
+                    Leadform.append(phone)                    
+                    if not self.Data.existCustomer(Customer['Account']):
+                        try:
                             self.Data.addCustomer(**Customer)
-                        else :
+                        except Exception as e :
+                            pass
+                    else :
+                        try:
                             self.Data.updateCustomer(Customer['Account'],**Customer)
-                        InvoicesList = self.jscode.getInvoiceInfo()
-                        for Invoice in InvoicesList:
-                            Invoice = self.filterInvoiceData(Invoice)
-                            if not self.Data.existInvoiceByID(Invoice['ID']):
+                        except Exception as e :
+                            pass
+                    InvoicesList = self.jscode.getInvoiceInfo()
+                    for Invoice in InvoicesList:
+                        Invoice = self.filterInvoiceData(Invoice)
+                        if not self.Data.existInvoiceByID(Invoice['ID']):
+                            try:
                                 self.Data.addInvoice(**Invoice)
-                            else:
+                            except Exception as e :
                                 pass
-                        if  Customer['HasPreviousUnPaidInvoice'] :
-                            Leadform.append(str(Customer['HasPreviousUnPaidInvoice']))
-                            Leadform.append(str(Invoice['BillDateClient']))
-                            Leadform.append(str(Invoice['SubscribtionEnd']))
-                            Leadform.append(str(Invoice['TotalAmount']))
-                        else : 
-                            Leadform = [areacode,phone,str(Customer['HasPreviousUnPaidInvoice']),"","",""]
-                        self.Lead.emit(Leadform)
-                    else:
-                        self.Lead.emit([areacode,phone,"NoAccount","NoAccount","NoAccount","NoAccount"])
-                    self.backToInquiry()
-                else :
+                        else:
+                            pass
+                    if  Customer['HasPreviousUnPaidInvoice'] :
+                        Leadform.append(str(Customer['HasPreviousUnPaidInvoice']))
+                        Leadform.append(str(Invoice['BillDateClient']))
+                        Leadform.append(str(Invoice['SubscribtionEnd']))
+                        Leadform.append(str(Invoice['TotalAmount']))
+                    else : 
+                        Leadform = [areacode,phone,str(Customer['HasPreviousUnPaidInvoice']),"","",""]
+                    self.Lead.emit(Leadform)
+                else:
                     self.Lead.emit([areacode,phone,"NoAccount","NoAccount","NoAccount","NoAccount"])
-            except Exception as e :
-                print(f"\n Error in this Func {e}")
+                self.backToInquiry()
+            else :
+                self.Lead.emit([areacode,phone,"NoAccount","NoAccount","NoAccount","NoAccount"])
     def exit(self):
-        #self.driver.quit()
         self.driver.close()
-
-
-
-
-
-
-
-
-# we = WePay()
-
-# t1 = time.time()
-
-#target = [('2040279','40'),('2060730','40'),('2063272','40'),('2125821','40'),('2125923','40'),('2570415','40'),('2572838','40'),('2573931','40'),('2591736','40'),('2627226','40')]
-
-
-
-# we.ScrapePhonesList(target)
-
-
-# we.writeAreaCode("40")
-# we.writePhoneNumber("3523182")
-# we.clickSearchButton()
-# if we.checkExistAccount(): 
-#     print(we.checkExistAccount())
-
-# Account = we.jscode.getAccountInfo()
-# Cust = we.jscode.getCustomerInfo()
-# Invoice = we.jscode.getInvoiceInfo()
-
-# t2 = time.time()
-# print(f"\n Account -> {Account}\n")
-# print(f"\n Customer -> {Cust} \n")
-# print(f"\n Invoice -> {Invoice} \n")
-
-
-# print(f"{t2-t1} Total Time")
-
-
-# print("\n succecfully Stored Array \n")
-# time.sleep(100)
-
-
-
 
 
 

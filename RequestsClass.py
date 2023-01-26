@@ -1,4 +1,4 @@
-import requests
+# import requests
 
 # URL = 'https://pay.jumia.com.eg/api/v3/utilities/order/summary/internet.bill.tedata@fawry'
 
@@ -26,10 +26,10 @@ import requests
 #     'x-device-version': 'Web',
 # }
 
-proxy = {
-    "https": 'https://41.33.207.146:443',
-    #"http": 'https://129.80.58.106:3128'
-}
+# proxy = {
+#     "https": '122.54.161.20:8082',
+#     "http": '122.54.161.20:8082'
+# }
 
 
 # payload = {"service_key": "internet.bill.tedata@fawry", "payload": {"phone_number_message": "For landline numbers, you must enter the governate code", "phone_number": "EG_+20221842002", "list_types": "1"}, "form_segments": [{"service_key": "internet.bill.tedata@fawry", "elements": [{"key": "phone_number_message", "label": "For landline numbers, you must enter the governate code", "options":'[]', "template":"message", "title":"", "validators":'[]'}, {"key": "phone_number", "label": "Phone Number", "options": [{"form_elements": '[]', "icon":"", "label":"Egypt", "message":"", "option_value":"EG_+20", "preselected":'false'}], "template":"phone_with_country", "title":"What is your phone number?", "validators":[{"message": "Phone Number is required", "options": '[]', "type":"required"}, {"message": "Invalid phone number", "options":'[]', "type":"phoneNumber"}]}, {"key": "list_types", "label": "fawry_internet_bill_tedata_type_label", "options": [{"display_value": "", "form_elements": '[]', "icon":"", "label":"fawry_internet_bill_tedata_pay_bill_label", "message":"", "option_value":"1", "preselected":'true'}, {"display_value": "", "form_elements": [{"key": "billType_code", "label": "fawry_internet_bill_tedata_buy_extra_bill_type_code_label", "options": [{"display_value": "", "form_elements": '[]', "icon":"", "label":"fawry_internet_bill_tedata_buy_extra_bill_type_code_12720_label", "message":"", "option_value":"12720", "preselected":'false'}, {"display_value": "", "form_elements": '[]', "icon":"", "label":"fawry_internet_bill_tedata_buy_extra_bill_type_code_12721_label", "message":"", "option_value":"12721", "preselected":'false'}, {
@@ -47,7 +47,6 @@ proxy = {
 # print(response.text)
 # print(response.status_code)
 
-print(requests.get("https://billing.te.eg/ar-EG?AreaCode=02&PhoneNumber=27038065&PinCode=&InquiryBy=telephone"))
 
 
 # ur = "https://billing.te.eg/api/Account/Inquiry"
@@ -165,3 +164,83 @@ print(requests.get("https://billing.te.eg/ar-EG?AreaCode=02&PhoneNumber=27038065
 # print(req.content)
 # print(req.status_code)
 # print(req.json())
+
+
+
+# from requests import get
+
+
+# http_proxy  = "http://10.10.1.10:3128"
+# https_proxy = "https://10.10.1.11:1080"
+# ftp_proxy   = "ftp://10.10.1.10:3128"
+
+# proxies = { 
+#               "http"  : http_proxy, 
+#               "https" : https_proxy, 
+#               "ftp"   : ftp_proxy
+#             }
+
+
+
+
+# ip = get('https://httpbin.org/ip').text
+# print('My public IP address is: {}'.format(ip))
+
+
+# ip2 = get('https://httpbin.org/ip', proxies=proxy).text
+# print('My public IP address is: {}'.format(ip2))
+
+
+
+
+# proxies = {'https': '10.10.10.10:3128'}
+
+# r = requests.get('https://reqbin.com/echo', proxies=proxies)
+
+# print(f'Status Code: {r.status_code}')
+
+import requests
+
+url = "http://billing.te.eg"
+
+proxy = {
+    '41.33.207.146':'443'
+}
+
+headers = {
+    'Accept': '*/*' ,
+    'Accept-Encoding': 'gzip, deflate, br' ,
+    'Accept-Language': 'en-US,en;q=0.9' ,
+    'Connection': 'keep-alive' ,
+    'Content-Length': '72' ,
+    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' ,
+    'Cookie': 'f5avraaaaaaaaaaaaaaaa_session_=PDNCOIFEKBDBIIKCLJIABBMEOHIJEKNOJGMBPOIDFCMKKENACHMAEGIDALDACLKMMIMDENEODLNEFHLLNHDAGAGENGAKMNHNAFJADBDIDADNEADLDHLIOELOPPPBKKFG; culture=ar-EG; _gcl_au=1.1.114254175.1674306988; _ga=GA1.3.2101636973.1674306989; _ga=GA1.2.627839104.1674376278; _fbp=fb.1.1674376278858.1991375811; _tt_enable_cookie=1; _ttp=IC5_BABsluLLi4EXxIdSDgGs2Fu; _gid=GA1.3.1128609973.1674558820; token=31A3C64FAFC60C6FB6C8264E66C57BA6202301261403131811C397C8E9F879A176FBBF89F96425; f5avraaaaaaaaaaaaaaaa_session_=BIOEHFABHAIPEDCPNLNAPIHJJHFCELBIFFONKBJEDPDLCCOBLCPONHDHNEIJOKPPCGMDMAGEDLBHILGEHJAAAPLKNGAMIIOBLCEFENJHMMCPOALCADGOKJFHONBMHBEI; TS016e6d92=010aa23b1def25a05aea1ab51935b2fbe871b8c6d3564d72f50b0ef6ae1a4946c85bf7811399451ead7734b05264df96c17c95aa37fac37f30672ad9b39f4cb40d195ae8dfd80fba91ce8da05031c5402756cbeb397a61ae0e6d68b15a5bb173774db33f34; _gat_UA-6641213-30=1' ,
+    'Host': 'billing.te.eg' ,
+    'Origin': 'https://billing.te.eg' ,
+    'Referer': 'https://billing.te.eg/ar-EG' ,
+    'sec-ch-ua': '"Not_A Brand";v="99", "Google Chrome";v="109", "Chromium";v="109"' ,
+    'sec-ch-ua-mobile': '?0' ,
+    'sec-ch-ua-platform': '"Windows"' ,
+    'Sec-Fetch-Dest': 'empty' ,
+    'Sec-Fetch-Mode': 'cors' ,
+    'Sec-Fetch-Site': 'same-origin' ,
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36' ,
+    'X-Requested-With': 'XMLHttpRequest' ,
+}
+
+
+payload = {
+    "AreaCode=02&PhoneNumber=27038065&PinCode=&InquiryBy=telephone&AccountNo="
+}
+
+
+req = requests.get(
+    url = url ,
+    #headers = headers ,
+    #data = payload ,
+)
+
+print(req)
+print(req.status_code)
+
+
