@@ -201,7 +201,7 @@
 
 import requests
 
-url = "http://billing.te.eg"
+url = "https://billing.te.eg"
 
 proxy = {
     '41.33.207.146':'443'
@@ -227,17 +227,13 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36' ,
     'X-Requested-With': 'XMLHttpRequest' ,
 }
-
-
 payload = {
     "AreaCode=02&PhoneNumber=27038065&PinCode=&InquiryBy=telephone&AccountNo="
 }
-
-
 req = requests.get(
     url = url ,
-    #headers = headers ,
-    #data = payload ,
+    headers = headers ,
+    data = payload ,
 )
 
 print(req)

@@ -4,6 +4,8 @@ from MyPyQt5 import MyQTreeWidget , MyCustomContextMenu,MyMessageBox,MyThread,py
 import typing,datetime,openpyxl,pandas,time
 from mainclassDemo import WePay
 import numpy as np
+from ProxyFilterClass import ProxyFilterAPI
+import json
 
 
 class Ui_MainWindow(object):
@@ -58,7 +60,7 @@ class Ui_MainWindow(object):
         self.Thread = Thread()
         self.Thread.setMainClass(self)
         self.Thread.msg.connect(self.msg.showInfo)
-        self.Thread.Lead.connect(self.treeWidget.appendData)
+        self.Thread.Lead.connect(self.appendData)
         self.Thread.statues.connect(self.statusLabel.setText)
         self.pushButton_2.clicked.connect(self.Thread.start)
         self.pushButton.clicked.connect(lambda : self.Thread.kill(msg="يا عم بطل رخامة بقاا -_-"))
@@ -77,6 +79,14 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "File"))
         self.label_2.setText(_translate("MainWindow", "Sheet Name"))
 
+    def appendData(self,lead):
+        if lead[2] == 'True':
+            lead[2] = 'يوجد فاتورة'
+        elif lead[2] == 'False':
+            lead[2] = 'لايوجد فواتير'
+        elif lead[2] == 'NoAccount':
+            lead[2] = 'لايوجد حساب لهذا العميل'
+        self.treeWidget.appendData(lead)
 
     def contextMenu(self):
         menu = MyCustomContextMenu([
@@ -126,7 +136,6 @@ class Ui_MainWindow(object):
         return response[1:]
 
 
-
 class Thread(MyThread):
     Lead = pyqtSignal(list)
     msg = pyqtSignal(str)
@@ -141,31 +150,31 @@ class Thread(MyThread):
                 excelfile = self.mainClass.lineEdit.text() , 
                 sheetname = "Sheet1" if self.mainClass.lineEdit_2.text() == "" or self.mainClass.lineEdit_2.text() == " " else self.mainClass.lineEdit_2.text()
             )
-            listOfPhones = list(set(listOfPhones))
+            # listOfPhones = list(set(listOfPhones))
             totalNumbers = len(listOfPhones)
             myrange = listOfPhones[::70]
             listOfPhones = np.array_split(listOfPhones,len(myrange))
-            print(listOfPhones)
+            print(totalNumbers)
             t1 = time.time()
-            for phones in listOfPhones:
-                print(f'Starting with {phones}') 
-                self.statues.emit("Opening Browser")                   
-                self.we = WePay()
-                self.we.Lead.connect(self.Lead.emit)
-                self.mainClass.lineEdit.clear()
-                try:
+            try:
+                for phones in listOfPhones:
+                    print(f'Starting with {phones}') 
+                    self.statues.emit("Opening Browser")                   
+                    self.we = WePay()
+                    self.we.Lead.connect(self.Lead.emit)
+                    self.mainClass.lineEdit.clear()
                     self.statues.emit("Start Scraping ... ")
                     self.we.ScrapePhonesList(phones)
                     self.statues.emit("End Scraping ... ")
-                except Exception as e :
-                    pass
-                self.we.exit()
-                self.statues.emit("Closing Browser")        
-            t2 = time.time()
-            self.statues.emit("Stopped")        
-            print(f"\n {t2-t1} Is Total time for make {totalNumbers} number \n")
-            self.msg.emit(f"\n {round(t2-t1,ndigits=4)} Is Total time for make {totalNumbers} number \nنورتنا يا رجولة متجيش تانى بقاا ^_-")
-        return super().run()
+                    self.we.exit()
+                    self.statues.emit("Closing Browser")
+                t2 = time.time()
+                self.statues.emit("Stopped")        
+                print(f"\n {t2-t1} Is Total time for make {totalNumbers} number \n")
+                self.msg.emit(f"\n {round(t2-t1,ndigits=4)} Is Total time for make {totalNumbers} number \nنورتنا يا رجولة متجيش تانى بقاا ^_-")
+            except Exception as e :
+                self.msg.emit(f"Error in {e}\nPlease Contact Hesham To Solve it")
+
 
 
     def kill(self, msg: typing.Optional[bool]):
