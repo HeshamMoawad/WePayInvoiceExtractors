@@ -2,9 +2,8 @@
 from PyQt5 import QtCore, QtWidgets , QtGui
 from MyPyQt5 import MyQTreeWidget , MyCustomContextMenu,MyMessageBox,MyThread,pyqtSignal
 import typing,datetime,openpyxl,pandas,time
-from mainclassDemo import WePay
+from mainclass import WePay
 import numpy as np
-from ProxyFilterClass import ProxyFilterAPI
 import json
 
 
