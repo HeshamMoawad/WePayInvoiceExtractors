@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets ,QtGui
 import pyperclip , typing 
 from datetime import datetime
 from styles import Styles
@@ -205,6 +205,8 @@ class Page2(QObject):
         self.lineEditfiledir.setReadOnly(True)
         self.horizontalLayout_9.addWidget(self.lineEditfiledir)
         self.filedirbtn = QtWidgets.QToolButton(self.frame_11)
+        self.filedirbtn.setIcon(QtGui.QIcon("Data\Icons\icons8-export-excel-96.png"))
+        self.filedirbtn.setIconSize(QtCore.QSize(30,30))
         self.filedirbtn.clicked.connect(self.getFileDir)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         self.filedirbtn.setSizePolicy(sizePolicy)
