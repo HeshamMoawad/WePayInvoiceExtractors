@@ -15,10 +15,38 @@ from MyPyQt5 import (
     QShortcut
 )
 
+####################################################
+
+# MIT License
+
+# Copyright (c) 2023 HeshamMoawad
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+####################################################
 
 
 class Window(MyQMainWindow):
     Threads = []
+
+    def __init__(self,name:str) -> None:
+        super().__init__()
+        self.Name = name
 
     def SetupUi(self):
         self.ThreadsCount = 0
@@ -31,6 +59,7 @@ class Window(MyQMainWindow):
         self.setStyleSheet(Styles().main)
         self.setFrameLess()
         self.Menu = QSideMenuEnteredLeaved(
+            Title = self.Name ,
             parent = self.mainWidget ,
             ButtonsCount = 2 ,
             PagesCount = 2 ,
@@ -63,7 +92,7 @@ class Window(MyQMainWindow):
         self.Menu.connect_Button_Page(btn = self.SettingBtn ,pageIndex = 1)
 
 
-        self.Menu.MainLabel.setText("hhhhhhhh")
+        # self.Menu.MainLabel.setText("hhhhhhhh")
 
         ################### ShortCut ##########################
         self.clear = QShortcut(QKeySequence("ctrl+r"),self)
@@ -215,41 +244,28 @@ class WorkingThread(MyThread):
 
     def run(self) -> None:
         self.statues.emit("Starting")
-        # try:
-        self.WePay = WePay()
-        self.WePay.Lead.connect(self.Lead.emit)
-        self.WePay.msg.connect(self.msg.emit)
-        listOfPhones = self.splitPhones(
-            List = self.WePay.convertDataframeToPhonesList(self.df)
-        )
-        self.errorNumbers = []
-        for lista in listOfPhones :
-            # self.WePay.start()
-            self.scrape(lista)
-            # for AreaCode , PhoneNumber in lista :
-            #     try:
-            #         print(AreaCode,PhoneNumber)
-            #         self.statues.emit(f"Searching for +2{AreaCode}{PhoneNumber}")
-            #         self.WePay.ScrapePhone(areacode = AreaCode , phone = PhoneNumber)
-            #         self.df = self.df[1:]
-            #         self.DataFrame.emit({'index':self.index , "dataframe":self.df})
-            #     except Exception as e :
-            #         self.errorNumbers.append((AreaCode,PhoneNumber))
-            #         # self.msg.emit(f"Error in Task{self.index} : {e}\nPlease Contact Hesham")
-            #         self.errors.append(e)
-            # self.WePay.exit()
-        errlength = len(self.errorNumbers)
-        print(self.errorNumbers)
-        if errlength == 0 :
-            pass
-        elif errlength <= 70 :
-            self.scrape(self.errorNumbers)
-        elif errlength > 70 :
-            listOfPhones = self.splitPhones(self.errorNumbers)
-            for List in listOfPhones:
-                self.scrape(List)
-        # except Exception as e :
-        #     self.msg.emit(f"Error in Task{self.index} : {e}\nPlease Contact Hesham")
+        try:
+            self.WePay = WePay()
+            self.WePay.Lead.connect(self.Lead.emit)
+            self.WePay.msg.connect(self.msg.emit)
+            listOfPhones = self.splitPhones(
+                List = self.WePay.convertDataframeToPhonesList(self.df)
+            )
+            self.errorNumbers = []
+            for lista in listOfPhones :
+                self.scrape(lista)
+            errlength = len(self.errorNumbers)
+            print(self.errorNumbers)
+            if errlength == 0 :
+                pass
+            elif errlength <= 70 :
+                self.scrape(self.errorNumbers)
+            elif errlength > 70 :
+                listOfPhones = self.splitPhones(self.errorNumbers)
+                for List in listOfPhones:
+                    self.scrape(List)
+        except Exception as e :
+            self.msg.emit(f"Error in Task{self.index} : {e}\nPlease Contact Hesham")
         self.finishedSignal.emit()
 
 
@@ -269,10 +285,8 @@ class WorkingThread(MyThread):
                 self.DataFrame.emit({'index':self.index , "dataframe":self.df})
             except Exception as e :
                 self.errorNumbers.append((AreaCode,PhoneNumber))
-                # self.msg.emit(f"Error in Task{self.index} : {e}\nPlease Contact Hesham")
                 self.errors.append(e)
         self.WePay.exit()
-
 
 
     def kill(self, msg: str = None):
@@ -281,9 +295,3 @@ class WorkingThread(MyThread):
         except Exception as e :
             pass
         return super().kill(msg)
-
-
-
-
-w = Window()
-w.show()

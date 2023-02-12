@@ -45,6 +45,12 @@ from styles import Styles
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Contact Me 
+# GitHub : github.com/HeshamMoawad
+# Gmail : HeshamMoawad120120@gmail.com
+# Whatsapp : +201111141853
+
+
 ####################################################
 
 class MyQTreeWidget(QTreeWidget,QWidget):
