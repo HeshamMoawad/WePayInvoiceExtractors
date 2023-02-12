@@ -83,8 +83,11 @@ class Styles():
             background-color:white;
             color:black;
         }
-        
-        
+        QComboBox QListView{
+            border-radius:4px;
+            background-color:white;
+            color:black;
+        }
         """
     class SpinBox():
         Normal = """
@@ -99,8 +102,9 @@ class Styles():
     class GroupBox():
         Normal = """
         QGroupBox{
+            /*
             border:2px;
-            border-radius:2px;
+            border-radius:2px;*/
             background-color:transparent;
         }
         """

@@ -64,6 +64,7 @@ class Window(MyQMainWindow):
         self.setFont(font)
         self.setStyleSheet(Styles().main)
         self.setFrameLess()
+        self.setAppIcon('Data\Icons\icons8-webnovel-48.ico')
         self.Menu = QSideMenuEnteredLeaved(
             Title = f"Welcome {self.Name if self.Name != 'K7Hesham' else 'Admin'}" ,
             parent = self.mainWidget ,
@@ -79,7 +80,6 @@ class Window(MyQMainWindow):
             MiniButtonIconPath = "Data\Icons\delete.png",
 
         )
-        # self.mainWidget.setStyleSheet(Styles().main)
         self.DashBoardBtn = self.Menu.getButton(0)
         self.DashBoardBtn.setTexts(entred=' DashBoard',leaved='')
         self.DashBoardBtn.setIcon(QIcon('Data\Icons\dashboard.png'))
@@ -97,9 +97,6 @@ class Window(MyQMainWindow):
         self.Menu.connect_Button_Page(btn = self.DashBoardBtn ,pageIndex = 0)
         self.Menu.connect_Button_Page(btn = self.SettingBtn ,pageIndex = 1)
 
-
-        # self.Menu.MainLabel.setText("hhhhhhhh")
-
         ################### ShortCut ##########################
         self.clear = QShortcut(QKeySequence("ctrl+r"),self)
         self.clear.activated.connect(lambda: self.updateWaitingDF({},clear=True))
@@ -116,7 +113,7 @@ class Window(MyQMainWindow):
             self.msg.showInfo("End Scrape Good Luck Next Time -_*")
             print(f"Main DF -> {self.dataframe}\n\nDF List -> {self.dataframeList}")
             self.DashBoard.comboBox.clear()
-            lambda: self.updateWaitingDF({},clear=True)
+            self.updateWaitingDF({},clear=True)
 
 
 
@@ -199,8 +196,6 @@ class Window(MyQMainWindow):
         ws = wb[sheetname]
         df = pandas.DataFrame(ws.values)
         df.dropna(inplace=True)
-        df[df.columns[0]].apply(int)
-        df[df.columns[1]].apply(int)
         df[df.columns[0]].apply(str)
         df[df.columns[1]].apply(str)
         df = df[1:]
@@ -249,6 +244,8 @@ class WorkingThread(MyThread):
         self.df = df
 
     def run(self) -> None:
+        if self.index == 0 :
+            self.MainClass.Setting.lineEditfiledir.clear()
         self.statues.emit("Starting")
         try:
             self.WePay = WePay()

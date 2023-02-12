@@ -365,8 +365,10 @@ class WePay(QObject):
     
     def ScrapePhone(self,areacode:str,phone:str):
         Leadform = []
-        # print(phone,areacode)
+        if '.' in phone :
+            phone = phone.split('.')[0]
         t1 = time.time()
+        
         if len(areacode) == 1:
             areacode = f"0{areacode}" 
         try:

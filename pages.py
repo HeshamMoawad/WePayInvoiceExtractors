@@ -240,7 +240,7 @@ class Page2(QObject):
         self.ThreadHbox.addWidget(self.ThreadCountLabel)#, 0, QtCore.Qt.AlignHCenter
         self.ThreadCountSpinbox = QtWidgets.QSpinBox(self.ThreadCountLabel)
         self.ThreadCountSpinbox.setMinimum(1)
-        self.ThreadCountSpinbox.setMaximum(30)
+        self.ThreadCountSpinbox.setMaximum(15)
         self.ThreadCountSpinbox.setValue(1)
         self.ThreadCountSpinbox.setStyleSheet(Styles.SpinBox.Normal)
         self.ThreadHbox.addWidget(self.ThreadCountSpinbox)
