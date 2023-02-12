@@ -1,7 +1,7 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 import pyperclip , typing 
 from datetime import datetime
-
+from styles import Styles
 from MyPyQt5 import (
     QObject ,
     pyqtSignal ,
@@ -17,13 +17,16 @@ class Page1(QObject):
     msg = MyMessageBox()
     def __init__(self, parent:QObject) -> None:
         super().__init__()
+        
         self.ExportRange =  {'AreaCode':0,'PhoneNumber':1,'HasInvoice':2,'InvoiceDate':3 ,'SubscribtionEnd':4,'TotalAmount':5,'Time Scraping':6}
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(parent)
         self.firstFrame = QtWidgets.QFrame(parent)
+        self.firstFrame.setStyleSheet(Styles.Frame.Normal)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.firstFrame)
         self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_5.setSpacing(30)
         self.exportFrame = QtWidgets.QFrame(self.firstFrame)
+        self.exportFrame.setStyleSheet(Styles.Frame.Normal)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.exportFrame)
         self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.label_3 = QtWidgets.QLabel(self.exportFrame)
@@ -36,12 +39,14 @@ class Page1(QObject):
         self.horizontalLayout_4.setStretch(1, 2)
         self.horizontalLayout_5.addWidget(self.exportFrame)
         self.taskFrame = QtWidgets.QFrame(self.firstFrame)
+        self.taskFrame.setStyleSheet(Styles.Frame.Normal)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.taskFrame)
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.label_2 = QtWidgets.QLabel(self.taskFrame)
         self.label_2.setText('Tasks')
         self.horizontalLayout_3.addWidget(self.label_2, 0, QtCore.Qt.AlignHCenter)
         self.comboBox = QtWidgets.QComboBox(self.taskFrame)
+        self.comboBox.setStyleSheet(Styles.ComboBox.Normal)
         self.comboBox.currentIndexChanged.connect(self.combochanged)
         self.horizontalLayout_3.addWidget(self.comboBox)
         self.horizontalLayout_5.addWidget(self.taskFrame)
@@ -49,6 +54,7 @@ class Page1(QObject):
         self.horizontalLayout_5.setStretch(1, 2)
         self.verticalLayout_2.addWidget(self.firstFrame)
         self.buttonsFrame = QtWidgets.QFrame(parent)
+        self.buttonsFrame.setStyleSheet(Styles.Frame.Normal)
         self.ThreadHbox = QtWidgets.QHBoxLayout(self.buttonsFrame)
         self.startbtn = QtWidgets.QToolButton(self.buttonsFrame)
         self.startbtn.setText("Start")
@@ -68,8 +74,10 @@ class Page1(QObject):
         self.ThreadHbox.setStretch(2, 5)
         self.verticalLayout_2.addWidget(self.buttonsFrame)
         self.treeFrame = QtWidgets.QFrame(parent)
+        self.treeFrame.setStyleSheet(Styles.Frame.Normal)
         self.verticalLayout = QtWidgets.QVBoxLayout(self.treeFrame)
         self.frame = QtWidgets.QFrame(self.treeFrame)
+        self.frame.setStyleSheet(Styles.Frame.Normal)
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.frame)
         self.counterlabel = QtWidgets.QLabel(self.frame)
         self.counterlabel.setText("Count : 0")
@@ -77,10 +85,12 @@ class Page1(QObject):
         self.treeWidget.setColumns(["AreaCode","PhoneNumber","HasInvoice","InvoiceDate",'SubscribtionEnd',"TotalAmount","Time Scraping"])
         self.treeWidget.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
         self.treeWidget.customContextMenuRequested.connect(self.menu)
+        self.treeWidget.setStyleSheet(Styles.TreeWidget.Normal)
         self.verticalLayout.addWidget(self.treeWidget)
         self.horizontalLayout.addWidget(self.counterlabel, 0, QtCore.Qt.AlignHCenter)
         self.waitinglabel = QtWidgets.QLabel(self.frame)
         self.waitinglabel.setText("Waiting : 0")
+        self.waitinglabel.setStyleSheet("color:white;")
         self.horizontalLayout.addWidget(self.waitinglabel, 0, QtCore.Qt.AlignHCenter)
         self.verticalLayout.addWidget(self.frame)
         self.verticalLayout_2.addWidget(self.treeFrame)
@@ -89,7 +99,7 @@ class Page1(QObject):
         self.verticalLayout_2.setStretch(2, 6)
         self.waitingCount = 0
 
-    def updateWaiting(self,length:int = None):#wait:bool=False ,
+    def updateWaitingText(self,length:int = None):#wait:bool=False ,
         if length != None:
             self.waitingCount = length
             self.waitinglabel.setText(f"Waiting : {length}")
@@ -156,6 +166,7 @@ class Page2(QObject):
         self.settinggroupbox.setTitle("Setting")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.settinggroupbox)
         self.frame_11 = QtWidgets.QFrame(self.settinggroupbox)
+        self.frame_11.setStyleSheet(Styles.Frame.Normal)
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout(self.frame_11)
         self.filedirlabel = QtWidgets.QLabel(self.frame_11)
         self.filedirlabel.setText("File Directory")
@@ -173,9 +184,11 @@ class Page2(QObject):
         self.horizontalLayout_9.setStretch(2, 1)
         self.verticalLayout_4.addWidget(self.frame_11)
         self.frame_13 = QtWidgets.QFrame(self.settinggroupbox)
+        self.frame_13.setStyleSheet(Styles.Frame.Normal)
         self.horizontalLayout_11 = QtWidgets.QHBoxLayout(self.frame_13)
         self.horizontalLayout_11.setContentsMargins(0, 0, 0, 0)
         self.frame_12 = QtWidgets.QFrame(self.frame_13)
+        self.frame_12.setStyleSheet(Styles.Frame.Normal)
         self.horizontalLayout_10 = QtWidgets.QHBoxLayout(self.frame_12)
         self.horizontalLayout_10.setContentsMargins(0, 0, 0, 0)
         self.sheetnamelabel = QtWidgets.QLabel(self.frame_12)
@@ -186,6 +199,7 @@ class Page2(QObject):
         self.horizontalLayout_10.addWidget(self.lineEdit)
 ############################
         self.ThreadCountFrame = QtWidgets.QFrame(self.frame_13)
+        self.ThreadCountFrame.setStyleSheet(Styles.Frame.Normal)
         self.ThreadCountLabel = QtWidgets.QLabel(self.ThreadCountFrame)
         self.ThreadCountLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.ThreadCountLabel.setText("Thread Count ")
@@ -196,6 +210,7 @@ class Page2(QObject):
         self.ThreadCountSpinbox.setMinimum(1)
         self.ThreadCountSpinbox.setMaximum(30)
         self.ThreadCountSpinbox.setValue(1)
+        self.ThreadCountSpinbox.setStyleSheet(Styles.SpinBox.Normal)
         self.ThreadHbox.addWidget(self.ThreadCountSpinbox)
         self.ThreadHbox.setStretch(0, 3)
         self.ThreadHbox.setStretch(1, 2)
@@ -211,9 +226,11 @@ class Page2(QObject):
         self.exportgroupbox.setTitle("Export Options")
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout(self.exportgroupbox)
         self.frame_8 = QtWidgets.QFrame(self.exportgroupbox)
+        self.frame_8.setStyleSheet(Styles.Frame.Normal)
         self.verticalLayout = QtWidgets.QVBoxLayout(self.frame_8)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.frame = QtWidgets.QFrame(self.frame_8)
+        self.frame.setStyleSheet(Styles.Frame.Normal)
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.frame)
         self.AreaCodelabel = QtWidgets.QLabel(self.frame)
         self.AreaCodelabel.setText("AreaCode")
@@ -227,6 +244,7 @@ class Page2(QObject):
         self.horizontalLayout.setStretch(1,1)
         self.verticalLayout.addWidget(self.frame)
         self.frame_2 = QtWidgets.QFrame(self.frame_8)
+        self.frame_2.setStyleSheet(Styles.Frame.Normal)
         self.ThreadHbox = QtWidgets.QHBoxLayout(self.frame_2)
         self.PhoneNumberlabel = QtWidgets.QLabel(self.frame_2)
         self.PhoneNumberlabel.setText("PhoneNumber")
@@ -240,6 +258,7 @@ class Page2(QObject):
         self.ThreadHbox.setStretch(1,1)
         self.verticalLayout.addWidget(self.frame_2)
         self.frame_3 = QtWidgets.QFrame(self.frame_8)
+        self.frame_3.setStyleSheet(Styles.Frame.Normal)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.frame_3)
         self.HasInvoicelabel = QtWidgets.QLabel(self.frame_3)
         self.HasInvoicelabel.setText("HasInvoice")
@@ -254,9 +273,11 @@ class Page2(QObject):
         self.verticalLayout.addWidget(self.frame_3)
         self.horizontalLayout_8.addWidget(self.frame_8)
         self.frame_9 = QtWidgets.QFrame(self.exportgroupbox)
+        self.frame_9.setStyleSheet(Styles.Frame.Normal)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.frame_9)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.frame_7 = QtWidgets.QFrame(self.frame_9)
+        self.frame_7.setStyleSheet(Styles.Frame.Normal)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout(self.frame_7)
         self.InvoiceDatelabel = QtWidgets.QLabel(self.frame_7)
         self.InvoiceDatelabel.setText('InvoiceDate')
@@ -270,6 +291,7 @@ class Page2(QObject):
         self.horizontalLayout_7.setStretch(1,1)
         self.verticalLayout_2.addWidget(self.frame_7)
         self.frame_4 = QtWidgets.QFrame(self.frame_9)
+        self.frame_4.setStyleSheet(Styles.Frame.Normal)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.frame_4)
         self.SubscribtionEndlabel = QtWidgets.QLabel(self.frame_4)
         self.SubscribtionEndlabel.setText("SubscribtionEnd")
@@ -283,6 +305,7 @@ class Page2(QObject):
         self.horizontalLayout_4.setStretch(1,1)
         self.verticalLayout_2.addWidget(self.frame_4)
         self.frame_5 = QtWidgets.QFrame(self.frame_9)
+        self.frame_5.setStyleSheet(Styles.Frame.Normal)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.frame_5)
         self.TotalAmountlabel = QtWidgets.QLabel(self.frame_5)
         self.TotalAmountlabel.setText("TotalAmount")
@@ -297,9 +320,11 @@ class Page2(QObject):
         self.verticalLayout_2.addWidget(self.frame_5)
         self.horizontalLayout_8.addWidget(self.frame_9)
         self.frame_10 = QtWidgets.QFrame(self.exportgroupbox)
+        self.frame_10.setStyleSheet(Styles.Frame.Normal)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.frame_10)
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.frame_6 = QtWidgets.QFrame(self.frame_10)
+        self.frame_6.setStyleSheet(Styles.Frame.Normal)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout(self.frame_6)
         self.timescrapelabel = QtWidgets.QLabel(self.frame_6)
         self.timescrapelabel.setText("Time Scraping")

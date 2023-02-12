@@ -1,6 +1,8 @@
 from pages import Page1,Page2
 import pandas , openpyxl , time , numpy
 from mainclass import WePay
+import os 
+from styles import Styles
 from MyPyQt5 import (
     pyqtSignal ,
     MyQMainWindow ,
@@ -26,6 +28,8 @@ class Window(MyQMainWindow):
         font = QFont()
         font.setPointSize(12)
         self.setFont(font)
+        self.setStyleSheet(Styles().main)
+        self.setFrameLess()
         self.Menu = QSideMenuEnteredLeaved(
             parent = self.mainWidget ,
             ButtonsCount = 2 ,
@@ -40,6 +44,7 @@ class Window(MyQMainWindow):
             MiniButtonIconPath = "Data\Icons\delete.png",
 
         )
+        # self.mainWidget.setStyleSheet(Styles().main)
         self.DashBoardBtn = self.Menu.getButton(0)
         self.DashBoardBtn.setTexts(entred=' DashBoard',leaved='')
         self.DashBoardBtn.setIcon(QIcon('Data\Icons\dashboard.png'))
@@ -56,6 +61,11 @@ class Window(MyQMainWindow):
         self.Setting.ExportRangeSignal.connect(self.DashBoard.setExportRange)
         self.Menu.connect_Button_Page(btn = self.DashBoardBtn ,pageIndex = 0)
         self.Menu.connect_Button_Page(btn = self.SettingBtn ,pageIndex = 1)
+
+
+        self.Menu.MainLabel.setText("hhhhhhhh")
+
+        ################### ShortCut ##########################
         self.clear = QShortcut(QKeySequence("ctrl+r"),self)
         self.clear.activated.connect(lambda: self.updateWaitingDF({},clear=True))
         ################### Thread Part ##########################
@@ -69,33 +79,57 @@ class Window(MyQMainWindow):
         if len(self.finishedThreads) == len(self.Threads):
             self.Menu.MainLabel.setText("Ended Succecfully")
             self.msg.showInfo("End Scrape Good Luck Next Time -_*")
+            print(f"Main DF -> {self.dataframe}\n\nDF List -> {self.dataframeList}")
             self.DashBoard.comboBox.clear()
+            lambda: self.updateWaitingDF({},clear=True)
 
-    def runThreads(self,count):
+
+
+    def prepareDF(self,count:int):
         fileDir = self.Setting.lineEditfiledir.text()
         sheetname = 'Sheet1' if self.Setting.lineEdit.text() == '' else self.Setting.lineEdit.text() 
-        self.dataframeList = self.splitDataFrame(
-                df = self.getExcelData( excelfile = fileDir, sheetname = sheetname) ,
-                nArray = count ,
-                )
-        self.DashBoard.updateWaiting(length = len(pandas.concat(self.dataframeList)))
-        for index in range(count):
-            self.ThreadsCount = count
-            currentvalues = [self.DashBoard.comboBox.itemText(i) for i in range(self.DashBoard.comboBox.count())]
-            valuescount = self.DashBoard.comboBox.count()
-            self.DashBoard.comboBox.clear()
-            self.DashBoard.comboBox.addItems( currentvalues +[f"Task{ valuescount+ 1}"])
-            Thread = WorkingThread()
-            Thread.index = index
-            Thread.setData(self.logicDirMethod(count,index))
-            Thread.setMainClass(self)
-            Thread.msg.connect(self.msg.showInfo)
-            Thread.statues.connect(self.Menu.MainLabel.setText)
-            Thread.Lead.connect(self.appendData)
-            Thread.finishedSignal.connect(self.finishedThread)
-            Thread.DataFrame.connect(self.updateWaitingDF)
-            Thread.start(Thread.Priority.InheritPriority)
-            self.Threads.append(Thread)
+
+        if fileDir != "":
+            if os.path.isfile(fileDir):
+                self.dataframeList = self.splitDataFrame(
+                        df = self.getExcelData( excelfile = fileDir, sheetname = sheetname) ,
+                        nArray = count ,
+                            )
+                self.dataframe = pandas.concat(self.dataframeList)
+                return True
+            elif not os.path.isfile(fileDir):
+                self.msg.showInfo('No Such File Or Directory')
+                return False
+        else:
+            if len(self.dataframe) >= 1 :
+                return True
+            else:
+                self.msg.showInfo("No Data In Waiting")
+                return False
+
+
+
+
+    def runThreads(self,count:int):
+        if self.prepareDF(count):
+            self.DashBoard.updateWaitingText(length = len(self.dataframe))
+            for index in range(count):
+                self.ThreadsCount = count
+                currentvalues = [self.DashBoard.comboBox.itemText(i) for i in range(self.DashBoard.comboBox.count())]
+                valuescount = self.DashBoard.comboBox.count()
+                self.DashBoard.comboBox.clear()
+                self.DashBoard.comboBox.addItems( currentvalues +[f"Task{ valuescount+ 1}"])
+                Thread = WorkingThread()
+                Thread.index = index
+                Thread.setData(self.logicDirMethod(count,index))
+                Thread.setMainClass(self)
+                Thread.msg.connect(self.msg.showInfo)
+                Thread.statues.connect(self.Menu.MainLabel.setText)
+                Thread.Lead.connect(self.appendData)
+                Thread.finishedSignal.connect(self.finishedThread)
+                Thread.DataFrame.connect(self.updateWaitingDF)
+                Thread.start(Thread.Priority.InheritPriority)
+                self.Threads.append(Thread)
 
     def killThread(self):
         for thread in self.Threads :
@@ -113,20 +147,27 @@ class Window(MyQMainWindow):
             lead[2] = 'لايوجد حساب لهذا العميل'
         self.DashBoard.treeWidget.appendDataAsList(lead)
 
+
     def updateWaitingDF(self,signal:dict ,clear:bool=False):
         if clear == False :
             self.dataframeList[signal['index']] = signal["dataframe"]
-            self.DashBoard.updateWaiting(length = len(pandas.concat(self.dataframeList)))
+            self.dataframe = pandas.concat(self.dataframeList)
+            self.DashBoard.updateWaitingText(length = len(self.dataframe))
         if clear == True :
             self.dataframe = pandas.DataFrame()
-            self.DashBoard.updateWaiting(length = 0)
-            self.dataframeList = []
+            self.DashBoard.updateWaitingText(length = 0)
+            self.dataframeList.clear()
+
 
     def getExcelData(self,excelfile,sheetname)->pandas.DataFrame:
         wb = openpyxl.load_workbook(excelfile)
         ws = wb[sheetname]
         df = pandas.DataFrame(ws.values)
         df.dropna(inplace=True)
+        df[df.columns[0]].apply(int)
+        df[df.columns[1]].apply(int)
+        df[df.columns[0]].apply(str)
+        df[df.columns[1]].apply(str)
         df = df[1:]
         return df
 
@@ -178,25 +219,60 @@ class WorkingThread(MyThread):
         self.WePay = WePay()
         self.WePay.Lead.connect(self.Lead.emit)
         self.WePay.msg.connect(self.msg.emit)
-        phonelist = self.WePay.convertDataframeToPhonesList(self.df)
-        myrange = phonelist[::70]
-        listOfPhones = numpy.array_split(phonelist,len(myrange))
+        listOfPhones = self.splitPhones(
+            List = self.WePay.convertDataframeToPhonesList(self.df)
+        )
+        self.errorNumbers = []
         for lista in listOfPhones :
-            self.WePay.start()
-            for AreaCode , PhoneNumber in lista :
-                try:
-                    print(AreaCode,PhoneNumber)
-                    self.statues.emit(f"Searching for +2{AreaCode}{PhoneNumber}")
-                    self.WePay.ScrapePhone(areacode = AreaCode , phone = PhoneNumber)
-                    self.df = self.df[1:]
-                    self.DataFrame.emit({'index':self.index , "dataframe":self.df})
-                except Exception as e :
-                    self.msg.emit(f"Error in Task{self.index} : {e}\nPlease Contact Hesham")
-                    self.errors.append(e)
-            self.WePay.exit()
+            # self.WePay.start()
+            self.scrape(lista)
+            # for AreaCode , PhoneNumber in lista :
+            #     try:
+            #         print(AreaCode,PhoneNumber)
+            #         self.statues.emit(f"Searching for +2{AreaCode}{PhoneNumber}")
+            #         self.WePay.ScrapePhone(areacode = AreaCode , phone = PhoneNumber)
+            #         self.df = self.df[1:]
+            #         self.DataFrame.emit({'index':self.index , "dataframe":self.df})
+            #     except Exception as e :
+            #         self.errorNumbers.append((AreaCode,PhoneNumber))
+            #         # self.msg.emit(f"Error in Task{self.index} : {e}\nPlease Contact Hesham")
+            #         self.errors.append(e)
+            # self.WePay.exit()
+        errlength = len(self.errorNumbers)
+        print(self.errorNumbers)
+        if errlength == 0 :
+            pass
+        elif errlength <= 70 :
+            self.scrape(self.errorNumbers)
+        elif errlength > 70 :
+            listOfPhones = self.splitPhones(self.errorNumbers)
+            for List in listOfPhones:
+                self.scrape(List)
         # except Exception as e :
         #     self.msg.emit(f"Error in Task{self.index} : {e}\nPlease Contact Hesham")
         self.finishedSignal.emit()
+
+
+    def splitPhones(self,List):
+        myrange = List[::70]
+        return numpy.array_split(List,len(myrange))
+
+
+    def scrape(self,List):
+        self.WePay.start()
+        for AreaCode , PhoneNumber in List :
+            try:
+                print(AreaCode,PhoneNumber)
+                self.statues.emit(f"Searching for +2{AreaCode}{PhoneNumber}")
+                self.WePay.ScrapePhone(areacode = AreaCode , phone = PhoneNumber)
+                self.df = self.df[1:]
+                self.DataFrame.emit({'index':self.index , "dataframe":self.df})
+            except Exception as e :
+                self.errorNumbers.append((AreaCode,PhoneNumber))
+                # self.msg.emit(f"Error in Task{self.index} : {e}\nPlease Contact Hesham")
+                self.errors.append(e)
+        self.WePay.exit()
+
 
 
     def kill(self, msg: str = None):
