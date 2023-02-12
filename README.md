@@ -30,6 +30,11 @@ Searching By (AreaCode , PhoneNumber)
 * Pyperclip
 
 
+# ScreenShots
+![Screenshot](page1.PNG) 
+
+![Screenshot](page2.PNG) 
+
 
 ## Frameworks 
 * [PyQt5](https://doc.qt.io/qtforpython/)   For Build GUI 
