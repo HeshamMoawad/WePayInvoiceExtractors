@@ -34,6 +34,12 @@ from MyPyQt5 import (
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+# Contact Me 
+# GitHub : github.com/HeshamMoawad
+# Gmail : HeshamMoawad120120@gmail.com
+# Whatsapp : +201111141853
+
 ####################################################
 
 

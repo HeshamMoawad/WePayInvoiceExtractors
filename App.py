@@ -38,6 +38,12 @@ from MyPyQt5 import (
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+# Contact Me 
+# GitHub : github.com/HeshamMoawad
+# Gmail : HeshamMoawad120120@gmail.com
+# Whatsapp : +201111141853
+
 ####################################################
 
 
@@ -45,8 +51,8 @@ class Window(MyQMainWindow):
     Threads = []
 
     def __init__(self,name:str) -> None:
-        super().__init__()
         self.Name = name
+        super().__init__()
 
     def SetupUi(self):
         self.ThreadsCount = 0
@@ -59,7 +65,7 @@ class Window(MyQMainWindow):
         self.setStyleSheet(Styles().main)
         self.setFrameLess()
         self.Menu = QSideMenuEnteredLeaved(
-            Title = self.Name ,
+            Title = f"Welcome {self.Name if self.Name != 'K7Hesham' else 'Admin'}" ,
             parent = self.mainWidget ,
             ButtonsCount = 2 ,
             PagesCount = 2 ,

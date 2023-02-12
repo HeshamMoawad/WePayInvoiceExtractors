@@ -36,6 +36,7 @@ msg = MyMessageBox()
 
 # Data\LoginCode.txt
 if validation.checkValidation(txtfilepath='Data\LoginCode.txt',layers = 2) :
+    # print(validation.getUserName())
     w = Window(validation.getUserName())
     w.show()
     with open("Data\\tying.txt",'w+') as file :
