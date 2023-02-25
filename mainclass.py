@@ -5,7 +5,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import  NoSuchElementException
-import typing , time , sqlite3 , datetime
+import typing , time , sqlite3 , datetime , os
 import pandas 
 import openpyxl
 from MyPyQt5 import QObject , pyqtSignal
@@ -195,12 +195,19 @@ class WePay(QObject):
 
     def __init__(self) -> None:
         super().__init__()
-    
+            
+
     def start(self):
         option = Options()
         option.add_experimental_option("excludeSwitches", ["enable-logging"])
         option.add_argument('--disable-logging')
-        self.driver = Chrome(ChromeDriverManager().install(),options=option)
+        try:  
+            self.driver =  Chrome('chromedriver.exe',options=option)
+            print("Normal exe File")
+        except Exception as e :
+            self.msg.emit('Please Update Chrome Driver And Contact Hesham To Update App ')
+            self.msg.emit(f'App Will Close With Force Contact \n Hesham To fix {e}')
+            exit()
         self.driver.maximize_window()
         self.driver.get("https://billing.te.eg/ar-EG")
         self.jscode = JavaScriptCodeHandler(self.driver)

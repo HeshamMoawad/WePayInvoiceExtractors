@@ -2,6 +2,7 @@ from pages import Page1,Page2
 import pandas , openpyxl , time , numpy
 from mainclass import WePay
 import os 
+from datetime import datetime
 from styles import Styles
 from MyPyQt5 import (
     pyqtSignal ,
@@ -78,7 +79,6 @@ class Window(MyQMainWindow):
             MaxButtonIconPath = "Data\Icons\maximize.png",
             Mini_MaxButtonIconPath = "Data\Icons\minimize.png",
             MiniButtonIconPath = "Data\Icons\delete.png",
-
         )
         self.DashBoardBtn = self.Menu.getButton(0)
         self.DashBoardBtn.setTexts(entred=' DashBoard',leaved='')
@@ -96,7 +96,6 @@ class Window(MyQMainWindow):
         self.Setting.ExportRangeSignal.connect(self.DashBoard.setExportRange)
         self.Menu.connect_Button_Page(btn = self.DashBoardBtn ,pageIndex = 0)
         self.Menu.connect_Button_Page(btn = self.SettingBtn ,pageIndex = 1)
-
         ################### ShortCut ##########################
         self.clear = QShortcut(QKeySequence("ctrl+r"),self)
         self.clear.activated.connect(lambda: self.updateWaitingDF({},clear=True))
@@ -139,29 +138,50 @@ class Window(MyQMainWindow):
                 self.msg.showInfo("No Data In Waiting")
                 return False
 
-
-
+    def goThread(self,signal):
+        index = signal[0]
+        df = signal[1]
+        currentvalues = [self.DashBoard.comboBox.itemText(i) for i in range(self.DashBoard.comboBox.count())]
+        valuescount = self.DashBoard.comboBox.count()
+        self.DashBoard.comboBox.clear()
+        self.DashBoard.comboBox.addItems( currentvalues +[f"Task{ valuescount+ 1}"])
+        Thread = WorkingThread()
+        Thread.index = index
+        Thread.setData(df)
+        Thread.setMainClass(self)
+        Thread.msg.connect(self.msg.showInfo)
+        Thread.statues.connect(self.Menu.MainLabel.setText)
+        Thread.Lead.connect(self.appendData)
+        Thread.finishedSignal.connect(self.finishedThread)
+        Thread.DataFrame.connect(self.updateWaitingDF)
+        Thread.gothreadSignal.connect(self.goThread)
+        Thread.start(Thread.Priority.InheritPriority)
+        self.Threads.append(Thread)
 
     def runThreads(self,count:int):
-        if self.prepareDF(count):
-            self.DashBoard.updateWaitingText(length = len(self.dataframe))
-            for index in range(count):
-                self.ThreadsCount = count
-                currentvalues = [self.DashBoard.comboBox.itemText(i) for i in range(self.DashBoard.comboBox.count())]
-                valuescount = self.DashBoard.comboBox.count()
-                self.DashBoard.comboBox.clear()
-                self.DashBoard.comboBox.addItems( currentvalues +[f"Task{ valuescount+ 1}"])
-                Thread = WorkingThread()
-                Thread.index = index
-                Thread.setData(self.logicDirMethod(count,index))
-                Thread.setMainClass(self)
-                Thread.msg.connect(self.msg.showInfo)
-                Thread.statues.connect(self.Menu.MainLabel.setText)
-                Thread.Lead.connect(self.appendData)
-                Thread.finishedSignal.connect(self.finishedThread)
-                Thread.DataFrame.connect(self.updateWaitingDF)
-                Thread.start(Thread.Priority.InheritPriority)
-                self.Threads.append(Thread)
+        if os.path.isfile('chromedriver.exe') :
+            if self.prepareDF(count):
+                self.DashBoard.updateWaitingText(length = len(self.dataframe))
+                for index in range(count):
+                    self.ThreadsCount = count
+                    currentvalues = [self.DashBoard.comboBox.itemText(i) for i in range(self.DashBoard.comboBox.count())]
+                    valuescount = self.DashBoard.comboBox.count()
+                    self.DashBoard.comboBox.clear()
+                    self.DashBoard.comboBox.addItems( currentvalues +[f"Task{ valuescount+ 1}"])
+                    Thread = WorkingThread()
+                    Thread.index = index
+                    Thread.setData(self.logicDirMethod(count,index))
+                    Thread.setMainClass(self)
+                    Thread.msg.connect(self.msg.showInfo)
+                    Thread.statues.connect(self.Menu.MainLabel.setText)
+                    Thread.Lead.connect(self.appendData)
+                    Thread.gothreadSignal.connect(self.goThread)
+                    Thread.finishedSignal.connect(self.finishedThread)
+                    Thread.DataFrame.connect(self.updateWaitingDF)
+                    Thread.start(Thread.Priority.InheritPriority)
+                    self.Threads.append(Thread)
+        else :
+            self.msg.showCritical(f'Chrome Driver Not found \nplease make sure you update it to last version \nAnd add it to path {os.getcwd()}')
 
     def killThread(self):
         for thread in self.Threads :
@@ -234,6 +254,7 @@ class WorkingThread(MyThread):
     Lead = pyqtSignal(list)
     DataFrame = pyqtSignal(dict)
     finishedSignal = pyqtSignal()
+    gothreadSignal = pyqtSignal(list)
     errors = []
     index = 0
 
@@ -268,7 +289,11 @@ class WorkingThread(MyThread):
                 for List in listOfPhones:
                     self.scrape(List)
         except Exception as e :
-            self.msg.emit(f"Error in Task{self.index} : {e}\nPlease Contact Hesham")
+            print(f"Error in Task{self.index} : {e}\nPlease Contact Hesham")
+            # self.msg.emit(f"Error in Task{self.index} : {e}\nPlease Contact Hesham")
+            self.MainClass.DashBoard.comboBox.removeItem(self.index)
+            # self.errors.append(f"{datetime.now()} Error in Task{self.index} : {e}\n ")
+            self.gothreadSignal.emit([self.index,self.df])
         self.finishedSignal.emit()
 
 

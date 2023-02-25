@@ -80,6 +80,7 @@ class Myhash ():
         return True if current.year <= int(resDate['year']) and current.month <= int(resDate['month']) and current.day <= int(resDate['day']) else False
 
     def checkMAC(self,MAC:str):
+        # print(self.getCurrentMAC())
         return True if MAC == self.getCurrentMAC() else False
         
     def  getCurrentMAC(self)-> str:
@@ -107,6 +108,7 @@ class Myhash ():
                     text = code ,
                     num_of_layers = layers ,
                 )
+                # print(response)
                 self.username = response['username']
                 if self.username == "K7Hesham": # Admin
                     return True
@@ -118,6 +120,7 @@ class Myhash ():
                     text = data , 
                     num_of_layers = layers , 
                 )
+                # print(response)
                 self.username = response['username']
                 if self.username == "K7Hesham":
                     return True
