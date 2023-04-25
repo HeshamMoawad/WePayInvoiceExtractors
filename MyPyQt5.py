@@ -58,7 +58,7 @@ class MyQTreeWidget(QTreeWidget,QWidget):
     childChanged = pyqtSignal(int)
     _CHILD_COUNT = 0
     _ROW_INDEX = 0
-    def __init__(self, parent: typing.Optional[QWidget],counterLabel:typing.Optional[QLabel]) -> None:
+    def __init__(self, parent: typing.Optional[QWidget],counterLabel:QLabel = None) -> None:
         super().__init__(parent)
         self.counterLabel = counterLabel
         self.ColumnNames = []

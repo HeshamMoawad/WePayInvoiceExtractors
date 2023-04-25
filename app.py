@@ -9,11 +9,14 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from MyPyQt5 import MyQTreeWidget
+from mainclass import WePay
+
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
+        # MainWindow.setObjectName("MainWindow")
         MainWindow.resize(543, 352)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -26,10 +29,9 @@ class Ui_MainWindow(object):
         self.toolButton = QtWidgets.QToolButton(self.centralwidget)
         self.toolButton.setGeometry(QtCore.QRect(420, 10, 101, 21))
         self.toolButton.setObjectName("toolButton")
-        self.treeWidget = QtWidgets.QTreeWidget(self.centralwidget)
+        self.treeWidget = MyQTreeWidget(self.centralwidget)
         self.treeWidget.setGeometry(QtCore.QRect(20, 90, 501, 251))
-        self.treeWidget.setObjectName("treeWidget")
-        self.treeWidget.headerItem().setText(0, "AreaCode")
+        self.treeWidget.setColumns(['AreaCode','PhoneNumber','HasInvoice' , 'SubscribtionEnd' ,'TotalAmount'])
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(50, 40, 201, 41))
         self.pushButton.setObjectName("pushButton")
@@ -43,11 +45,14 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.pushButton_2.setText(_translate("MainWindow", "stop"))
         self.toolButton.setText(_translate("MainWindow", "..."))
-        self.treeWidget.headerItem().setText(1, _translate("MainWindow", "PhoneNumber"))
-        self.treeWidget.headerItem().setText(2, _translate("MainWindow", "HasInvoice"))
-        self.treeWidget.headerItem().setText(3, _translate("MainWindow", "SubscribtionEnd"))
-        self.treeWidget.headerItem().setText(4, _translate("MainWindow", "TotalAmount"))
         self.pushButton.setText(_translate("MainWindow", "start"))
+
+
+
+    
+
+
+
 
 
 if __name__ == "__main__":
