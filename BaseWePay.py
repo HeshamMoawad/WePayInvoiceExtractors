@@ -1038,6 +1038,7 @@ class Customer(object):
         self.PhoneNumber = self.customer['PhoneNumber']
         self.AssociatedTelephonesFormatted = self.customer['AssociatedTelephonesFormatted']
         self.HasPreviousUnPaidInvoice = Account['HasPreviousUnPaidInvoice']
+        self.HasInvoice = Account['HasPreviousUnPaidInvoice']
         self.DepositValue = self.customer['DepositValue']
         self.IsBusiness = self.customer['IsBusiness']
         self.__invoices = [Invoice(inv) for inv in self.AccountJS['Invoices']]
@@ -1052,6 +1053,9 @@ class NotCustomer(object):
         self.AreaCode = AreaCode
         self.PhoneNumber = PhoneNumber
         self.text = text
+        self.HasInvoice = text
+        # self.SubscribtionEnd = "No"
+        # self.TotalAmount = "No"
 
     @property
     def invoices(self)->typing.List[Invoice]:

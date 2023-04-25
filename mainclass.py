@@ -1,12 +1,12 @@
 import pandas 
-from MyPyQt5 import QObject , pyqtSignal 
+from MyPyQt5 import pyqtSignal 
 from PyQt5.QtCore import (
-                        QObject ,
                         pyqtSignal ,
                         QThread ,
                         QMutex , 
                          )
-from BaseWePay import BaseWePay , Customer , Invoice , NotCustomer
+from BaseWePay import BaseWePay , Customer  , NotCustomer
+
 ####################################################
 
 # MIT License
