@@ -85,24 +85,24 @@ class NewResponse(Response):
             510: "Not Extended",
             511: "Network Authentication Required",
         }
-    @property
-    def status_code_type(self):
-        match self.status_code:
-            case Informational if Informational in self.__Informational.keys():
-                return self.__Informational[Informational]
-            case Success if Success in self.__Success.keys():
-                return self.__Success[Success]
-            case Redirect if Redirect in self.__Redirect.keys():
-                return self.__Redirect[Redirect]
-            case ClientError if ClientError in self.__ClientError.keys():
-                return self.__ClientError[ClientError]
-            case ServerError if ServerError in self.__ServerError.keys():
-                return self.__ServerError[ServerError]
-            case _:
-                return None
+    # @property
+    # def status_code_type(self):
+    #     match self.status_code:
+    #         case Informational if Informational in self.__Informational.keys():
+    #             return self.__Informational[Informational]
+    #         case Success if Success in self.__Success.keys():
+    #             return self.__Success[Success]
+    #         case Redirect if Redirect in self.__Redirect.keys():
+    #             return self.__Redirect[Redirect]
+    #         case ClientError if ClientError in self.__ClientError.keys():
+    #             return self.__ClientError[ClientError]
+    #         case ServerError if ServerError in self.__ServerError.keys():
+    #             return self.__ServerError[ServerError]
+    #         case _:
+    #             return None
 
 class BaseSession(requests.Session):
-    def __init__(self, BaseURL: str , DefaultHeaders: dict = {}) -> None:
+    def __init__(self, BaseURL: str = "", DefaultHeaders: dict = {}) -> None:
         super().__init__()
         self.BaseURL = BaseURL
         self.headers = DefaultHeaders
@@ -110,6 +110,7 @@ class BaseSession(requests.Session):
         self.proxyindex = 0
         self.rotate_proxies = False
         self.__current_proxy = None
+         
         
     @property
     def base_url(self):

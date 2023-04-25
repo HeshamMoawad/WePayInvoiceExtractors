@@ -19,7 +19,7 @@ import typing , time , sqlite3 , datetime , os
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from styles import Styles
+# from styles import Styles
 
 ####################################################
 
@@ -965,14 +965,14 @@ class QSideMenuEnteredLeaved(QWidget):
         self.verticalLayout_2 = QVBoxLayout(self.ButtonsFrame)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setSpacing(ButtonsSpacing)
-        self.ExitButton.setStyleSheet(Styles.PushButton.Normal)
-        self.MaxButton.setStyleSheet(Styles.PushButton.Normal)
-        self.MiniButton.setStyleSheet(Styles.PushButton.Normal)
+        # self.ExitButton.setStyleSheet(Styles.PushButton.Normal)
+        # self.MaxButton.setStyleSheet(Styles.PushButton.Normal)
+        # self.MiniButton.setStyleSheet(Styles.PushButton.Normal)
         for index in range(ButtonsCount) :
             Button = MyQToolButton(self.ButtonsFrame)
             Button.setTexts(f'{index}',f"Button {index}") 
             Button.setAutoRaise(True)
-            Button.setStyleSheet(Styles.PushButton.Normal)
+            # Button.setStyleSheet(Styles.PushButton.Normal)
             #Button.setCheckable(True)
             sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
             sizePolicy.setHeightForWidth(Button.sizePolicy().hasHeightForWidth())
