@@ -1,0 +1,38 @@
+{
+    "Account": {
+        "InquiryByNewAndPhoneNotChanged": false,
+        "InquiryByOldAndPhoneChanged": false,
+        "UnPaidInvoices": [],
+        "HasPreviousUnPaidInvoice": false,
+        "InquiryTelephoneNumber": null,
+        "InquiryAreaCode": "003",
+        "InquiryPhoneNumber": "03332000",
+        "HasLoyalty": false,
+        "RechargeSign": "",
+        "BalanceDetailsSign": "56415C057C55926BCF197786E447656B",
+        "CategoryIDClient": "54DEFC7260353AFB1D41086B607385F0",
+        "Status": 4,
+        "Customer": {
+            "AreaCode": "003",
+            "PhoneNumber": "03332000",
+            "Account": "A3007095505",
+            "CategoryName": "WE أرضي",
+            "HasDeposit": true,
+            "DepositValue": 0.0,
+            "Frequency": 1,
+            "CategoryIdValue": "54DEFC7260353AFB1D41086B607385F0",
+            "HasMultibleTelephones": false,
+            "AssociatedTelephonesFormatted": "00303332000",
+            "AllowToRecharge": false,
+            "IsBusiness": false,
+            "AllowForRfpService": false,
+            "PinCodeReference": "",
+            "AssociatedTelephones": "00303332000",
+            "SignValue": "1CCC53B8F5B07AAE4AE03A3137F7A880"
+        },
+        "Invoices": [],
+        "PreviousUnPaidInvoices": null
+    },
+    "UnPaidInvoices": "D2EB1C587CD4733B22726CFA72CA2A32hBTrYNWO/KITxAy/C9Tz6w==",
+    "InfoMessage": null
+}
