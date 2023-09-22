@@ -22,7 +22,9 @@ class Excel ():
                 resultdata    
 
         Data = pd.DataFrame({"code": code ,"Num":Num ,"Faill num": resultdata})
+        
         Data.to_excel("data.xlsx", index=False)
+        
  
 
  
