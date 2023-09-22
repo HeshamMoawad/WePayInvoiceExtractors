@@ -8,19 +8,50 @@ from qmodels import (
     typing ,
     SharingDataFrame
 )
+from WePay import Customer , NotCustomer , BaseWePay
+
+
+def row(self,row)->dict:
+    return {
+        'AreaCode' : row[0],
+        'PhoneNumber' : row[1]
+    }
 
 
 class Task(QThread):
-
+    onCatchCustomer = pyqtSignal(Customer)
+    onCatchNotCustomer = pyqtSignal(NotCustomer)
+    
     def __init__(self ,parent:'TasksContainer',sharingdata:SharingDataFrame, **kwargs) -> None:
         super().__init__()
         self.setParent(parent)
         self.sharingdata = sharingdata
+        self.wepay = BaseWePay()
+        self.checker = Checking()
+        self.__stop = False 
     
     def parent(self)-> 'TasksContainer' :
         return super().parent()
 
-    def run(self) -> None: ...
+    def run(self) -> None: 
+        while not self.__stop :
+            try :
+                while not self.sharingdata.empty :
+                    resault = self.wepay.getAccount(**row(self.sharingdata.get_row()))
+                    if isinstance(resault,Customer):
+                        self.onCatchCustomer.emit(resault)
+                    elif isinstance(resault,NotCustomer):
+                        self.onCatchNotCustomer.emit(resault)
+                    else :
+                        print(resault)
+            except ConnectionError as ce :
+                print(ce)
+                if not self.checker.isConnect() :
+                    self.__stop = True
+            except Exception as e :
+                print(e)
+                self.__stop = True
+
 
     def __str__(self) -> str:
         return f"WePayWorker(isRunning : {self.isRunning()})"
@@ -54,7 +85,7 @@ class TasksContainer(QObject):
     
     def start(self,count:int):
         for _ in range(count):
-            task = Task(self)
+            task = Task(self , self.sharingdata)
             self.__tasks.append(task)
             task.start()
         self.status.emit("Status : ON ")
