@@ -2,9 +2,10 @@ import pandas as pd
 # from tasks import QThread   
 class Excel ():
     
-    def Load_Exel(self):
-        data = pd.read_excel("Book1.xlsx")
-        data=data["Faill Num"]
+    def Load_Exel(self, path):
+        data = pd.read_excel(path)
+        data = data[data.columns[:2]]
+
         data=(list(data))
         print(data)
         return data
@@ -18,6 +19,8 @@ class Excel ():
                 resultdata.append(str(code) + str(Num))
         elif len(str(code)) == 2:
                 resultdata.append(str(code) + str(Num))
+        elif len(str(code)) == 3: 
+                resultdata.append(int(code) + str(Num))       
         else :
                 resultdata    
 
