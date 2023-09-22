@@ -5,15 +5,17 @@ from qmodels import (
     MyMessageBox ,
     Checking ,
     pyqtSignal ,
-    typing
+    typing ,
+    SharingDataFrame
 )
 
 
 class Task(QThread):
 
-    def __init__(self ,parent:'TasksContainer', **kwargs) -> None:
+    def __init__(self ,parent:'TasksContainer',sharingdata:SharingDataFrame, **kwargs) -> None:
         super().__init__()
         self.setParent(parent)
+        self.sharingdata = sharingdata
     
     def parent(self)-> 'TasksContainer' :
         return super().parent()
@@ -41,9 +43,10 @@ class TasksContainer(QObject):
     status = pyqtSignal(str)
     msg = pyqtSignal(str)
 
-    def __init__(self, parent,**kwargs) -> None:
+    def __init__(self,sharingdata:SharingDataFrame,**kwargs) -> None:
         super().__init__()
         self.__tasks:typing.List[Task]= []
+        self.sharingdata = sharingdata
 
     @property
     def tasks(self)->typing.List[Task]:
