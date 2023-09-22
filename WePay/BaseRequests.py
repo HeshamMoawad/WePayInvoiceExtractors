@@ -5,7 +5,7 @@ from requests import Response
     
 
 class NewResponse(Response):
-    def __init__(self,response:Response) -> None:
+    def __init__(self,response:Response,**kwargs) -> None:
         self.__dict__ = response.__dict__        
         # Information responses
         self.__Informational = {
@@ -85,7 +85,9 @@ class NewResponse(Response):
             510: "Not Extended",
             511: "Network Authentication Required",
         }
-    
+        for key , value in kwargs.items():
+            self.__setattr__(key,value)
+
     @property
     def status_code_type(self):
         match self.status_code:
@@ -177,6 +179,7 @@ class Requests(object):
 
     def updateHeaders(self , h:dict):
         self.__headers.update(h)
+
     @property
     def base_url(self):
         return self.__BaseURL
@@ -195,7 +198,9 @@ class Requests(object):
             allow_redirects:bool = True, 
             proxies: dict = None,
             verify: bool = True, 
-            stream: bool = False ) -> NewResponse:
+            stream: bool = False ,
+            **kwargs ,
+            ) -> NewResponse:
         
         if URL is not None:
             url = self.__BaseURL + URL
@@ -208,7 +213,7 @@ class Requests(object):
 
         return NewResponse(requests.get(url, params=params, headers=headers, cookies=cookies, auth=auth,
                                 timeout=timeout, allow_redirects=allow_redirects, proxies=proxies, verify=verify,
-                                stream=stream))
+                                stream=stream),**kwargs)
 
     def post(self,
             URL: str = None, 
@@ -221,18 +226,18 @@ class Requests(object):
             allow_redirects: bool = True, 
             proxies: dict = None,
             verify: bool = True, 
-            stream: bool = False ) -> NewResponse:
+            stream: bool = False ,
+            **kwargs ,
+            ) -> NewResponse:
         
         if URL is not None:
             url = self.__BaseURL + URL
         else :
             url = self.__BaseURL
-
         headers = self.__headers.copy()
-        
         if headers is not None:
             headers.update(headers)
         return NewResponse(requests.post(url, data=data, json=json, headers=headers, cookies=cookies, auth=auth,
                                  timeout=timeout, allow_redirects=allow_redirects, proxies=proxies, verify=verify,
-                                 stream=stream))
+                                 stream=stream),**kwargs)
 

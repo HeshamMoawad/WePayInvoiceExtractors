@@ -1059,6 +1059,7 @@ class Customer(object):
     def invoices(self)->typing.List[Invoice]:
         return self.__invoices
 
+
 class NotCustomer(object):
     def __init__(self,AreaCode :str , PhoneNumber:str , text:str) -> None:
         self.AreaCode = AreaCode
@@ -1113,6 +1114,8 @@ class BaseWePay(Requests):
                 PhoneNumber = PhoneNumber ,
             ) , 
             verify = False ,
+            AreaCode =  AreaCode, 
+            PhoneNumber = PhoneNumber,
         )
         try : 
             return Customer(Response.json()['Account'])
