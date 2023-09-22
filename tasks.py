@@ -5,15 +5,17 @@ from qmodels import (
     MyMessageBox ,
     Checking ,
     pyqtSignal ,
-    typing
+    typing ,
+    SharingDataFrame
 )
 
 
 class Task(QThread):
 
-    def __init__(self ,parent:'TasksContainer', **kwargs) -> None:
+    def __init__(self ,parent:'TasksContainer',sharingdata:SharingDataFrame, **kwargs) -> None:
         super().__init__()
         self.setParent(parent)
+        self.sharingdata = sharingdata
     
     def parent(self)-> 'TasksContainer' :
         return super().parent()
@@ -21,7 +23,7 @@ class Task(QThread):
     def run(self) -> None: ...
 
     def __str__(self) -> str:
-        return f""
+        return f"WePayWorker(isRunning : {self.isRunning()})"
         
     def start(self) -> None:
         if not self.isRunning():
@@ -40,39 +42,27 @@ class Task(QThread):
 class TasksContainer(QObject):
     status = pyqtSignal(str)
     msg = pyqtSignal(str)
-    onSakaniMsg = pyqtSignal(str)
 
-    def __init__(self, parent,**kwargs) -> None:
+    def __init__(self,sharingdata:SharingDataFrame,**kwargs) -> None:
         super().__init__()
-        self.__tasks:typing.Dict[str,typing.List[Task]] = {}
-        self.__sakaniInfo = kwargs
+        self.__tasks:typing.List[Task]= []
+        self.sharingdata = sharingdata
 
     @property
-    def tasks(self)->typing.Dict[str,typing.List[Task]]:
+    def tasks(self)->typing.List[Task]:
         return self.__tasks
     
-    def addTask(self , unitcode:str , count:int):
-        taskList = []
-        for index in range(count):
-            task = Task(self,unitcode,index=index,**self.__sakaniInfo)
-            taskList.append(task)
+    def start(self,count:int):
+        for _ in range(count):
+            task = Task(self)
+            self.__tasks.append(task)
             task.start()
-        self.__tasks.update(
-            {unitcode:taskList}
-        )
         self.status.emit("Status : ON ")
-
-    def deleteTask(self,unitcode:str):
-        if unitcode in self.__tasks.keys() :
-            taskslist = self.__tasks[unitcode]
-            for task in taskslist:
-                task.delete()
-            del self.__tasks[unitcode]
-        self.status.emit("Status : OFF ") if not self.isRunning() else None
     
-    def deleteAll(self):
-        for unit in self.__tasks.keys():
-            self.deleteTask(unit)
+    def stop(self):
+        for task in self.__tasks :
+            task.delete()
+            self.__tasks.remove(task)            
         self.status.emit("Status : OFF ")
 
     def isRunning(self):

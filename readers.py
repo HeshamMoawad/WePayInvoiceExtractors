@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import pandas as pd 
 # from tasks import QThread   
 class Excel ():
@@ -63,3 +64,8 @@ class Excel ():
 
 
 
+=======
+################### Abdallah 
+
+#
+>>>>>>> fdb23fa6ade844cdcc63d1910ddacc84c561a197
