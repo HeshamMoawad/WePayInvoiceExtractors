@@ -187,12 +187,9 @@ class SharingDataFrame(QObject):
 class GifWidget(QWidget):
     def __init__(self ,parent:QWidget=None, gifPath:str = "Data\Icons\icons8-loading-infinity.gif"):
         super().__init__(parent)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.movie = QMovie(gifPath)
         self.label = QLabel(self)
         self.label.setAlignment(Qt.AlignCenter)
-        # self.label.setScaledContents(True)
         self.label.setMovie(self.movie)
         self.label.setScaledContents(False)
 
@@ -201,12 +198,7 @@ class GifWidget(QWidget):
         return super().hide()
 
     def show(self) -> None:
-        # screen_center = QDesktopWidget().availableGeometry().center()
-        # widget_rect = self.parent().geometry()
-        # widget_rect.moveCenter(screen_center)
-        # self.move(widget_rect.topLeft())
         self.movie.start()
-        # self.raise_()
         return super().show()
     
 
