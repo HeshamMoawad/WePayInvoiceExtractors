@@ -37,7 +37,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.sharingdata = SharingDataFrame(COLUMNS,self)
         self.taskscontainer  = TasksContainer(self.sharingdata)
         self.tableModel = MyTableModel(TABEL_MODEL_COLUMNS)
-        self.loadingWidget = GifWidget(self,'Icons\Spinner-1s-200px.gif')
         self.internet = Checking()
         self.excelReader = ExcelReader()
 
@@ -184,7 +183,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         # rename Labels 
         self.filenameLabel.setText("File Name :")
-        self.filenameValue.setText("test.xlsx")
+        self.filenameValue.setText(" ")
 
         self.waitingLabel.setText("Waiting :")
         self.waitingValue.setText("0")
@@ -205,6 +204,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.statusValue.setText("OFF")
 
         # connect load excel signal 
+
         self.loadsheetBtn.clicked.connect(self.getFileDir)
 
         self.sharingdata.lengthChanged.connect(lambda x :self.waitingValue.setText(str(x)))
@@ -222,6 +222,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.tableModel.message.connect(self.message.showInfo)
 
         self.exportBtn.clicked.connect(self.tableModel.export)
+        # self.showLoading()
 
         # Run ui constants
         self.setCentralWidget(self.centralwidget)
@@ -248,17 +249,18 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.excelReader.setExcelPath(dir)
         self.excelReader.onReadExcel.connect(self.sharingdata.setData)
         self.excelReader.onFaildRead.connect(self.message.showCritical)
+        self.loadingWidget = GifWidget(self,'Icons\Spinner-1s-200px.gif')
         self.excelReader.started.connect(self.showLoading)
-        self.excelReader.finished.connect(self.hideLoading)
+        self.excelReader.finished.connect(self.loadingWidget.hide)
         self.excelReader.start()
 
 
     def showLoading(self):
-        self.loadingWidget.setGeometry(0,0,50,50)
+        width= 200
+        hight = 200
+        self.loadingWidget.setGeometry(int((self.width()-width)/2),int((self.height()-hight)/2),width,hight)
+        self.loadingWidget.setAttribute(QtCore.Qt.WidgetAttribute.WA_AlwaysStackOnTop)
         self.loadingWidget.show()
-
-    def hideLoading(self):
-        self.loadingWidget.hide()
 
 
     @pyqtSlot(Customer)
