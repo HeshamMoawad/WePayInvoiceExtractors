@@ -121,6 +121,20 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.CounterValue.setObjectName("CounterValue")
         self.horizontalLayout_5.addWidget(self.CounterValue, 0, QtCore.Qt.AlignLeft)
         self.horizontalLayout_6.addWidget(self.counterFrame)
+
+        self.statusFrame = QtWidgets.QFrame(self.exportFrame)
+        self.statusFrame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.statusFrame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.statusFrame.setObjectName("statusFrame")
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.statusFrame)
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.statusLabel = QtWidgets.QLabel(self.statusFrame)
+        self.statusLabel.setObjectName("statusLabel")
+        self.horizontalLayout_5.addWidget(self.statusLabel, 0, QtCore.Qt.AlignRight)
+        self.statusValue = QtWidgets.QLabel(self.statusFrame)
+        self.statusValue.setObjectName("statusValue")
+        self.horizontalLayout_5.addWidget(self.statusValue, 0, QtCore.Qt.AlignLeft)
+        self.horizontalLayout_6.addWidget(self.statusFrame)
         self.exportBtn = QtWidgets.QPushButton(self.exportFrame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -148,6 +162,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.counterLabel.setText("Count :")
         self.CounterValue.setText("1000")
 
+        self.statusLabel.setText("Status : ")
+
         # rename btns 
         self.exportBtn.setText("Export")
         
@@ -156,9 +172,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.loadsheetBtn.setText("Load Excel")
 
+        self.statusValue.setText("OFF")
         # connect load excel signal 
         self.loadsheetBtn.clicked.connect(self.getFileDir)
-
 
         # Run ui constants
         self.setCentralWidget(self.centralwidget)
