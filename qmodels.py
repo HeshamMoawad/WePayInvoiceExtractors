@@ -159,6 +159,8 @@ class SharingDataFrame(QObject):
         return self.__data
 
     def setData(self,data:pandas.DataFrame):
+        data = data[data.columns[:2]]
+        data.columns = self.__data.columns
         self.__data = data
 
     def get_row(self):
