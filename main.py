@@ -18,8 +18,9 @@ from qmodels import (
     MyTableModel ,
     GifWidget ,
     Checking ,
+    pyqtSlot ,
 )
-from tasks import TasksContainer
+from tasks import TasksContainer , Customer , NotCustomer
 from readers import (
      COLUMNS ,
      TABEL_MODEL_COLUMNS ,
@@ -36,8 +37,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.sharingdata = SharingDataFrame(COLUMNS,self)
         self.taskscontainer  = TasksContainer(self.sharingdata)
         self.tableModel = MyTableModel(TABEL_MODEL_COLUMNS)
-        self.loadingWidget = GifWidget(self,'')
+        self.loadingWidget = GifWidget(self,'Icons\Spinner-1s-200px.gif')
         self.internet = Checking()
+        self.excelReader = ExcelReader()
 
 
 
@@ -201,9 +203,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.loadsheetBtn.setText("Load Excel")
 
         self.statusValue.setText("OFF")
+
         # connect load excel signal 
         self.loadsheetBtn.clicked.connect(self.getFileDir)
 
+        self.sharingdata.lengthChanged.connect(lambda x :self.waitingValue.setText(str(x)))
+
+        self.taskscontainer.onCatchCustomer.connect(self.appendDataToModelAsCustomer)
+        self.taskscontainer.onCatchNotCustomer.connect(self.appendDataToModelAsNotCustomer)
+        self.taskscontainer.status.connect(self.statusValue.setText)
+        self.taskscontainer.msg.connect(self.message.showInfo)
+
+        self.startBtn.clicked.connect(lambda : self.taskscontainer.start(10))
+
+        self.stopBtn.clicked.connect(self.taskscontainer.stop)
+        
         # Run ui constants
         self.setCentralWidget(self.centralwidget)
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -218,7 +232,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # else :
         #     self.message.showCritical('Please Check internet Connection','Error')
 
-
     # method to get excel path ==================================================================
     def getFileDir(self):
         file_filter = 'Data File (*.xlsx );; Excel File (*.xlsx )'
@@ -227,6 +240,32 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             filter=file_filter,
             )[0]
         self.filenameValue.setText(dir.split("/")[-1])
+        self.excelReader.setExcelPath(dir)
+        self.excelReader.onReadExcel.connect(self.sharingdata.setData)
+        self.excelReader.onFaildRead.connect(self.message.showCritical)
+        self.excelReader.started.connect(self.showLoading)
+        self.excelReader.finished.connect(self.hideLoading)
+        self.excelReader.start()
+
+
+    def showLoading(self):
+        self.loadingWidget.setGeometry(0,0,50,50)
+        self.loadingWidget.show()
+
+    def hideLoading(self):
+        self.loadingWidget.hide()
+
+
+    @pyqtSlot(Customer)
+    def appendDataToModelAsCustomer(self,cust:Customer):
+        info = [cust.AreaCode,cust.PhoneNumber,True,"--"]
+        info.append(cust.invoices[0].TotalAmount) if cust.HasPreviousUnPaidInvoice else info.append("No Invoices")
+        self.tableModel.addrow(info)
+
+    @pyqtSlot(NotCustomer)
+    def appendDataToModelAsNotCustomer(self,notCust:NotCustomer):
+        info = [notCust.AreaCode,notCust.PhoneNumber,False,notCust.text,"--"]
+        self.tableModel.addrow(info)
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ from tasks import  QThread , pyqtSignal , typing
 
 # Constants
 COLUMNS = ['AreaCode','PhoneNumber']
-TABEL_MODEL_COLUMNS = COLUMNS + ["Invoice Price","Server Message"]
+TABEL_MODEL_COLUMNS = COLUMNS + ["Have Account","Server Message","Invoice Price"]
 
 
 

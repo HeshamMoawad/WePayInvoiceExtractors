@@ -10,7 +10,7 @@ from qmodels import (
 from WePay import Customer , NotCustomer , BaseWePay
 
 
-def row(self,row)->dict:
+def row(row)->dict:
     return {
         'AreaCode' : row[0],
         'PhoneNumber' : row[1]
@@ -26,7 +26,7 @@ class Task(QThread):
         self.setParent(parent)
         self.sharingdata = sharingdata
         self.wepay = BaseWePay()
-        self.checker = Checking()
+        self.checker = parent.checker
         self.__stop = False 
     
     def parent(self)-> 'TasksContainer' :
@@ -36,7 +36,8 @@ class Task(QThread):
         while not self.__stop :
             try :
                 while not self.sharingdata.empty :
-                    resault = self.wepay.getAccount(**row(self.sharingdata.get_row()))
+                    hr = row(self.sharingdata.get_row())
+                    resault = self.wepay.getAccount(**hr)
                     if isinstance(resault,Customer):
                         self.onCatchCustomer.emit(resault)
                     elif isinstance(resault,NotCustomer):
@@ -49,6 +50,8 @@ class Task(QThread):
                     self.__stop = True
             except Exception as e :
                 print(e)
+                print(e.args)
+                print(e.with_traceback())
                 self.__stop = True
 
 
@@ -60,7 +63,7 @@ class Task(QThread):
             return super().start(self.Priority.HighPriority)
     
     def stop(self):
-        if self.isRunning(self):
+        if self.isRunning():
             self.terminate()
             self.wait()
 
@@ -80,23 +83,31 @@ class TasksContainer(QObject):
         super().__init__()
         self.__tasks:typing.List[Task]= []
         self.sharingdata = sharingdata
+        self.checker = Checking()
 
     @property
     def tasks(self)->typing.List[Task]:
         return self.__tasks
     
     def start(self,max:int):
-        if self.sharingdata.rowCount() < max :
-            max = self.sharingdata.rowCount()
-        for _ in range(max):
-            print(f"Running {_}")
-            task = Task(self , self.sharingdata)
-            task.onCatchCustomer.connect(self.onCatchCustomer.emit)
-            task.onCatchNotCustomer.connect(self.onCatchNotCustomer.emit)
-            self.__tasks.append(task)
-            task.start()
-        self.status.emit("Status : ON ")
-    
+        if not self.sharingdata.empty:
+            if self.checker.isConnect():
+                if self.sharingdata.rowCount() < max :
+                    max = self.sharingdata.rowCount()
+                for _ in range(max):
+                    print(f"Running {_}")
+                    task = Task(self , self.sharingdata)
+                    task.onCatchCustomer.connect(self.onCatchCustomer.emit)
+                    task.onCatchNotCustomer.connect(self.onCatchNotCustomer.emit)
+                    self.__tasks.append(task)
+                    task.start()
+                self.status.emit("Status : ON ")
+            else :
+                self.msg.emit("No Internet Connection !!")
+        else :
+            self.msg.emit("No Data in Wating !")
+
+
     def stop(self):
         for task in self.__tasks :
             task.delete()
