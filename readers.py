@@ -37,8 +37,20 @@ class ExcelReader(QThread):
     def run(self) -> None:
         self.loadExel()
         
+    def start(self) -> None:
+        if not self.isRunning():
+            return super().start(self.Priority.HighPriority)
+    
+    def stop(self):
+        if self.isRunning(self):
+            self.terminate()
+            self.wait()
 
- 
+    def delete(self):
+        self.stop()
+        self.deleteLater()
+
+
  
 
  
