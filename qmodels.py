@@ -162,6 +162,7 @@ class SharingDataFrame(QObject):
         data = data[data.columns[:2]]
         data.columns = self.__data.columns
         self.__data = data
+        self.lengthChanged.emit(self.rowCount())
 
     def get_row(self):
         frow = self.__data.iloc[0]
