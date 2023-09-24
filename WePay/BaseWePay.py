@@ -1120,7 +1120,6 @@ class BaseWePay(Requests):
         try : 
             return Customer(Response.json()['Account'])
         except Exception as e :
-            print(e)
             return NotCustomer(
                 AreaCode= Response.AreaCode ,
                 PhoneNumber = Response.PhoneNumber , 
