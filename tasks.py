@@ -2,7 +2,6 @@ from PyQt5.QtCore import  QObject, QThread
 from qmodels import (
     QThread ,
     QObject ,
-    MyMessageBox ,
     Checking ,
     pyqtSignal ,
     typing ,
@@ -86,8 +85,11 @@ class TasksContainer(QObject):
     def tasks(self)->typing.List[Task]:
         return self.__tasks
     
-    def start(self,count:int):
-        for _ in range(count):
+    def start(self,max:int):
+        if self.sharingdata.rowCount() < max :
+            max = self.sharingdata.rowCount()
+        for _ in range(max):
+            print(f"Running {_}")
             task = Task(self , self.sharingdata)
             task.onCatchCustomer.connect(self.onCatchCustomer.emit)
             task.onCatchNotCustomer.connect(self.onCatchNotCustomer.emit)
