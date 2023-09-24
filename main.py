@@ -187,10 +187,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.filenameValue.setText("test.xlsx")
 
         self.waitingLabel.setText("Waiting :")
-        self.waitingValue.setText("")
+        self.waitingValue.setText("0")
 
         self.counterLabel.setText("Count :")
-        self.CounterValue.setText("")
+        self.CounterValue.setText("0")
 
         self.statusLabel.setText("Status : ")
 
@@ -214,10 +214,15 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.taskscontainer.status.connect(self.statusValue.setText)
         self.taskscontainer.msg.connect(self.message.showInfo)
 
-        self.startBtn.clicked.connect(lambda : self.taskscontainer.start(10))
+        self.startBtn.clicked.connect(lambda : self.taskscontainer.start(20))
 
         self.stopBtn.clicked.connect(self.taskscontainer.stop)
         
+        self.tableModel.lengthChanged.connect(lambda x : self.CounterValue.setText(str(x)))
+        self.tableModel.message.connect(self.message.showInfo)
+
+        self.exportBtn.clicked.connect(self.tableModel.export)
+
         # Run ui constants
         self.setCentralWidget(self.centralwidget)
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -232,7 +237,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # else :
         #     self.message.showCritical('Please Check internet Connection','Error')
 
-    # method to get excel path ==================================================================
+    # method to get excel path 
     def getFileDir(self):
         file_filter = 'Data File (*.xlsx );; Excel File (*.xlsx )'
         dir = QtWidgets.QFileDialog.getOpenFileName(
