@@ -73,6 +73,9 @@ class Task(QThread):
 class TasksContainer(QObject):
     status = pyqtSignal(str)
     msg = pyqtSignal(str)
+    onCatchCustomer = pyqtSignal(Customer)
+    onCatchNotCustomer = pyqtSignal(NotCustomer)
+
 
     def __init__(self,sharingdata:SharingDataFrame,**kwargs) -> None:
         super().__init__()
@@ -86,6 +89,8 @@ class TasksContainer(QObject):
     def start(self,count:int):
         for _ in range(count):
             task = Task(self , self.sharingdata)
+            task.onCatchCustomer.connect(self.onCatchCustomer.emit)
+            task.onCatchNotCustomer.connect(self.onCatchNotCustomer.emit)
             self.__tasks.append(task)
             task.start()
         self.status.emit("Status : ON ")
