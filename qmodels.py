@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
     QLabel ,
 )
 from PyQt5.QtGui import QMovie
-
+from datetime import datetime
 
 
 #### Messages class
@@ -77,6 +77,7 @@ class Checking(QObject):
 #### ModelView
 class MyTableModel(QAbstractTableModel):
     lengthChanged = pyqtSignal(int)
+    message = pyqtSignal(str)
     def __init__(self, columns:typing.List[str]):
         super().__init__()
         self._data = pandas.DataFrame(columns=columns) 
@@ -132,6 +133,13 @@ class MyTableModel(QAbstractTableModel):
         self.lengthChanged.emit(self.rowCount())
         self.endInsertRows()
 
+    def export(self):
+        try :
+            name = f"Export-{datetime.now().date()}-({self.rowCount()}).xlsx"
+            self._data.to_excel(name,index=False)
+            self.message.emit(f"Exported Successfully as {name}")
+        except :
+            self.message.emit("Can't Export sheet ")
 
 #### Sharing Dataframe
 class SharingDataFrame(QObject):
@@ -162,6 +170,10 @@ class SharingDataFrame(QObject):
         data = data[data.columns[:2]]
         data.columns = self.__data.columns
         self.__data = data
+        self.lengthChanged.emit(self.rowCount())
+
+    def clear(self):
+        self.__data = pandas.DataFrame(columns=self.__data.columns)
         self.lengthChanged.emit(self.rowCount())
 
     def get_row(self):
