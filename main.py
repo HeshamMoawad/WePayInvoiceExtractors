@@ -218,7 +218,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.tableModel.message.connect(self.message.showInfo)
 
         self.exportBtn.clicked.connect(self.tableModel.export)
-        # self.showLoading()
 
         # Run ui constants
         self.setCentralWidget(self.centralwidget)

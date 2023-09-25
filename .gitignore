@@ -1,2 +1,4 @@
+*.xlsx
+*.pyc
 Test.py
 *.xlsx
