@@ -1,3 +1,6 @@
+# Producer : K7 Team
+# Hamada - Hesham
+
 from PyQt5.QtCore import (
     QObject ,
     Qt , 

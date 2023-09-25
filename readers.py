@@ -1,3 +1,6 @@
+# Producer : K7 Team
+# Hamada - Hesham
+
 import typing , os
 import pandas as pd 
 from tasks import  QThread , pyqtSignal , typing
