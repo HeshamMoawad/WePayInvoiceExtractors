@@ -282,8 +282,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     setting = SettingReader("setting.ini")
+    print(setting.getDomain(),setting.getSerialNumber())
     manager = BackendManager(setting.getDomain(),setting.getSerialNumber())
     ui = Ui_MainWindow()
+    ui.setAppIcon("Icons\icons8-filter-100.png")
     sendTMessage("Openning App")
     if manager.isValid() :
         ui.show()
