@@ -3,7 +3,6 @@
 
 from PyQt5 import QtCore, QtWidgets
 import sys , typing
-from readers import SettingReader
 
 APP = QtWidgets.QApplication(sys.argv)
 
@@ -36,7 +35,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.tableModel = MyTableModel(TABEL_MODEL_COLUMNS)
         self.internet = Checking()
         self.excelReader = ExcelReader()
-        SettingReader.start()
 
 
     def setupUi(self):
