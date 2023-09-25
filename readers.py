@@ -1,6 +1,6 @@
 # Producer : K7 Team
 # Hamada - Hesham
-
+import configparser
 import typing , os
 import pandas as pd 
 from tasks import  QThread , pyqtSignal , typing
@@ -55,7 +55,19 @@ class ExcelReader(QThread):
 
 
  
+class SettingReader ():
+    def start():
+        config_object = configparser.ConfigParser()
+        
+        with open("WePayInvoiceExtractors\WePay\setting.ini","r") as file_object:
+            config_object.read_file(file_object)
+            config_object.remove_section("server")
 
+        with open("WePayInvoiceExtractors\WePay\setting.ini","w") as file_object:
+            config_object.write(file_object)
+
+    
+    
  
  
  
