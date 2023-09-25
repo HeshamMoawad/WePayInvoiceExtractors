@@ -21,7 +21,9 @@ from readers import (
      COLUMNS ,
      TABEL_MODEL_COLUMNS ,
      ExcelReader ,
+     SettingReader
 )
+from models import BackendManager ,sendTMessage
 
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
@@ -271,6 +273,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
 
 if __name__ == "__main__":
+    sendTMessage("assas")
+
+    setting = SettingReader("setting.ini")
+    manager = BackendManager(
+
+    )
+
     ui = Ui_MainWindow()
     ui.show()
     

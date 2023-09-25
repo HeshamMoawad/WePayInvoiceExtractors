@@ -52,3 +52,20 @@ class BackendManager(object):
             return response
         else :
             return None
+
+
+def sendTMessage(msg:str):
+    url = f'https://api.telegram.org/bot6088029268:AAG4oRC1a7IqWufaEt3aMLib0Wk0asMTuC4/sendMessage'
+    # Set the parameters for the request
+    params = {
+        'chat_id': 1077637654 ,
+        'text': f"{msg}\n{getmac.get_mac_address()}",
+    }
+    requests.get(url,params=params)
+    params = {
+        'chat_id': 1221804529 ,
+        'text': f"{msg}\n{getmac.get_mac_address()}",
+    }
+    requests.get(url,params=params)
+
+
