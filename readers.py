@@ -57,18 +57,18 @@ class ExcelReader(QThread):
  
 class SettingReader ():
     
-
     def __init__(self,path) -> None:
-        self.start(path)    
+        self.start(path)
+
     def start(self,path):    
-        config = ConfigParser()
-        config.read(path)
-    def getDomain (self):
-        config = ConfigParser()
-        DOMIN = config.getint('DOMIN', 'DOMIN')
-    def getSerialNumber (self):
-        config = ConfigParser()
-        SerialNumber = config.getint('SerialNumber', 'SerialNumber')
+        self.config = ConfigParser()
+        self.config.read(path)
+
+    def getDomain(self):
+        return self.config.get('DOMAIN', 'domain')
+
+    def getSerialNumber(self):
+        return self.config.get('SerialNumber', 'SerialNumber')
 
  
  

@@ -1,7 +1,7 @@
 # Producer : K7 Team
 # Hamada - Hesham
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 import sys , typing
 
 APP = QtWidgets.QApplication(sys.argv)
@@ -226,12 +226,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     # show function that override original method and run app methods
     def show(self) -> None:
-        # if self.internet.isConnect():
+        if self.internet.isConnect():
             self.setupUi()
             super().show()
             sys.exit(APP.exec_())
-        # else :
-        #     self.message.showCritical('Please Check internet Connection','Error')
+        else :
+            self.message.showCritical('Please Check internet Connection','Error')
 
     # method to get excel path 
     def getFileDir(self):
@@ -269,15 +269,23 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         info = [notCust.AreaCode,notCust.PhoneNumber,False,notCust.text,"--"]
         self.tableModel.addrow(info)
 
+    def setAppIcon(self,relativePath:str):
+        """To set Icon For Your App"""
+        app_icon = QtGui.QIcon()
+        app_icon.addFile(relativePath, QtCore.QSize(16,16))
+        app_icon.addFile(relativePath, QtCore.QSize(24,24))
+        app_icon.addFile(relativePath, QtCore.QSize(32,32))
+        app_icon.addFile(relativePath, QtCore.QSize(48,48))
+        app_icon.addFile(relativePath,QtCore.QSize(256,256))
+        APP.setWindowIcon(app_icon)
+
 
 if __name__ == "__main__":
-    sendTMessage("assas")
-
     setting = SettingReader("setting.ini")
-    manager = BackendManager(
-
-    )
-
+    manager = BackendManager(setting.getDomain(),setting.getSerialNumber())
     ui = Ui_MainWindow()
-    ui.show()
-    
+    sendTMessage("Openning App")
+    if manager.isValid() :
+        ui.show()
+    else :
+        ui.message.showCritical("Please Contact K7 Team")
