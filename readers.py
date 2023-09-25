@@ -3,7 +3,7 @@
 
 from configparser import ConfigParser
 import pandas as pd 
-from tasks import  QThread , pyqtSignal , typing
+from tasks import  QThread , pyqtSignal , typing , os
 
 
 # Constants
