@@ -32,14 +32,18 @@
 
 
 
-import re
-# as per recommendation from @freylis, compile once only # '<.*?>'
-CLEANR = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});') 
+# import re
+# # as per recommendation from @freylis, compile once only # '<.*?>'
+# CLEANR = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});') 
 
-def cleanhtml(raw_html):
-  cleantext = re.sub(CLEANR, '', raw_html)
-  return cleantext
+# def cleanhtml(raw_html):
+#   cleantext = re.sub(CLEANR, '', raw_html)
+#   return cleantext
 
-print(cleanhtml("""<p><strong>This telephone does not exist.Please check <a href="https://my.te.eg/anonymous/select"/>here</a></strong></p>"""))
+# print(cleanhtml("""<p><strong>This telephone does not exist.Please check <a href="https://my.te.eg/anonymous/select"/>here</a></strong></p>"""))
 
 
+# import getmac 
+
+
+# print(getmac.get_mac_address())

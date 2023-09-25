@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
     QLabel ,
 )
 from PyQt5.QtGui import QMovie
-
+from datetime import datetime
 
 
 #### Messages class
@@ -77,6 +77,7 @@ class Checking(QObject):
 #### ModelView
 class MyTableModel(QAbstractTableModel):
     lengthChanged = pyqtSignal(int)
+    message = pyqtSignal(str)
     def __init__(self, columns:typing.List[str]):
         super().__init__()
         self._data = pandas.DataFrame(columns=columns) 
@@ -132,6 +133,13 @@ class MyTableModel(QAbstractTableModel):
         self.lengthChanged.emit(self.rowCount())
         self.endInsertRows()
 
+    def export(self):
+        try :
+            name = f"Export-{datetime.now().date()}-({self.rowCount()}).xlsx"
+            self._data.to_excel(name,index=False)
+            self.message.emit(f"Exported Successfully as {name}")
+        except :
+            self.message.emit("Can't Export sheet ")
 
 #### Sharing Dataframe
 class SharingDataFrame(QObject):
@@ -159,11 +167,19 @@ class SharingDataFrame(QObject):
         return self.__data
 
     def setData(self,data:pandas.DataFrame):
+        data = data[data.columns[:2]]
+        data.columns = self.__data.columns
         self.__data = data
+        self.lengthChanged.emit(self.rowCount())
+
+    def clear(self):
+        self.__data = pandas.DataFrame(columns=self.__data.columns)
+        self.lengthChanged.emit(self.rowCount())
 
     def get_row(self):
         frow = self.__data.iloc[0]
         self.__data = self.__data.iloc[1:, :]
+        self.lengthChanged.emit(self.rowCount())
         return frow
 
 
@@ -171,12 +187,9 @@ class SharingDataFrame(QObject):
 class GifWidget(QWidget):
     def __init__(self ,parent:QWidget=None, gifPath:str = "Data\Icons\icons8-loading-infinity.gif"):
         super().__init__(parent)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.movie = QMovie(gifPath)
         self.label = QLabel(self)
         self.label.setAlignment(Qt.AlignCenter)
-        # self.label.setScaledContents(True)
         self.label.setMovie(self.movie)
         self.label.setScaledContents(False)
 
@@ -185,12 +198,7 @@ class GifWidget(QWidget):
         return super().hide()
 
     def show(self) -> None:
-        # screen_center = QDesktopWidget().availableGeometry().center()
-        # widget_rect = self.parent().geometry()
-        # widget_rect.moveCenter(screen_center)
-        # self.move(widget_rect.topLeft())
         self.movie.start()
-        # self.raise_()
         return super().show()
     
 

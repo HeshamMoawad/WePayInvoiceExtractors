@@ -1,36 +1,56 @@
+import typing , os
 import pandas as pd 
-# from tasks import QThread   
-class Excel ():
-    
-    def Load_Exel(self, path):
-        data = pd.read_excel(path)
-        data = data[data.columns[:2]]
+from tasks import  QThread , pyqtSignal , typing
 
-        data=(list(data))
-        print(data)
-        return data
-              
-    def ExcelRead(self,code, Num):
-        Data = Excel.Load_Exel()
-      
-        resultdata = list(Data)
-        if len(str(code)) == 1:
-                code = "0" + str(code)
-                resultdata.append(str(code) + str(Num))
-        elif len(str(code)) == 2:
-                resultdata.append(str(code) + str(Num))
-        elif len(str(code)) == 3: 
-                resultdata.append(int(code) + str(Num))       
+
+# Constants
+COLUMNS = ['AreaCode','PhoneNumber']
+TABEL_MODEL_COLUMNS = COLUMNS + ["Have Account","Server Message","Invoice Price"]
+
+
+
+
+class ExcelReader(QThread):
+    # Define Signals
+    onReadExcel = pyqtSignal(pd.DataFrame)
+    onFaildRead = pyqtSignal(str)
+
+    def __init__(self, excelPath:str = '') -> None:
+        super().__init__()
+        self.excelPath = excelPath
+
+    def setExcelPath(self , excelPath:str):
+        self.excelPath = excelPath
+
+    # Read Excel Method
+    def loadExel(self)-> pd.DataFrame :
+        if os.path.isfile(self.excelPath):
+            try :
+                data = pd.read_excel(self.excelPath)
+                self.onReadExcel.emit(data)
+            except Exception as e :
+                self.onFaildRead.emit(e)
         else :
-                resultdata    
+            self.onFaildRead.emit("File Dos Not Exist or Path Not Found !!")
 
-        Data = pd.DataFrame({"code": code ,"Num":Num ,"Faill num": resultdata})
+    # Method that Run When QThread Started
+    def run(self) -> None:
+        self.loadExel()
         
-        Data.to_excel("data.xlsx", index=False)
-        
- 
+    def start(self) -> None:
+        if not self.isRunning():
+            return super().start(self.Priority.HighPriority)
+    
+    def stop(self):
+        if self.isRunning(self):
+            self.terminate()
+            self.wait()
 
- 
+    def delete(self):
+        self.stop()
+        self.deleteLater()
+
+
  
 
  
