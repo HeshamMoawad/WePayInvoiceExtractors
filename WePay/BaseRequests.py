@@ -90,19 +90,18 @@ class NewResponse(Response):
 
     @property
     def status_code_type(self):
-        match self.status_code:
-            case Informational if Informational in self.__Informational.keys():
-                return self.__Informational[Informational]
-            case Success if Success in self.__Success.keys():
-                return self.__Success[Success]
-            case Redirect if Redirect in self.__Redirect.keys():
-                return self.__Redirect[Redirect]
-            case ClientError if ClientError in self.__ClientError.keys():
-                return self.__ClientError[ClientError]
-            case ServerError if ServerError in self.__ServerError.keys():
-                return self.__ServerError[ServerError]
-            case _:
-                return None
+        if self.status_code in self.__Informational.keys():
+            return self.__Informational[self.status_code]
+        elif self.status_code in self.__Success.keys():
+            return self.__Success[self.status_code]
+        elif self.status_code in self.__Redirect.keys():
+            return self.__Redirect[self.status_code]
+        elif self.status_code in self.__ClientError.keys():
+            return self.__ClientError[self.status_code]
+        elif self.status_code in self.__ServerError.keys():
+            return self.__ServerError[self.status_code]
+        else:
+            return None
 
 class BaseSession(requests.Session):
     def __init__(self, BaseURL: str , DefaultHeaders: dict = {}) -> None:

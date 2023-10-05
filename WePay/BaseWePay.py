@@ -1099,7 +1099,7 @@ class BaseWePay(Requests):
             'AccountNo': '',
         }
 
-    def getAccount(self, AreaCode :str , PhoneNumber:str)-> Customer | NotCustomer:
+    def getAccount(self, AreaCode :str , PhoneNumber:str)-> Customer or NotCustomer:
         self.updateHeaders(
             {
                 'Cookie' : f'token={self.gen.genText(78).upper()};' ,
@@ -1146,7 +1146,6 @@ class BaseWePay(Requests):
         try : 
             return Customer(Response.json()['Account'])
         except Exception as e :
-            print(e)
             return NotCustomer(
                 AreaCode= AreaCode ,
                 PhoneNumber = PhoneNumber , 
