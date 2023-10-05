@@ -9,7 +9,7 @@ import os
 
 # Constants
 COLUMNS = ['AreaCode','PhoneNumber']
-TABEL_MODEL_COLUMNS = COLUMNS + ["Have Account","Server Message","Invoice Price"]
+TABEL_MODEL_COLUMNS = COLUMNS + ["Server Message","New AreaCode","New PhoneNumber"]
 
 
 
@@ -33,7 +33,7 @@ class ExcelReader(QThread):
                 data = pd.read_excel(self.excelPath)
                 self.onReadExcel.emit(data)
             except Exception as e :
-                self.onFaildRead.emit(e)
+                self.onFaildRead.emit(str(e))
         else :
             self.onFaildRead.emit("File Dos Not Exist or Path Not Found !!")
 
