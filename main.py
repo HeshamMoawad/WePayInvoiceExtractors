@@ -25,6 +25,9 @@ from readers import (
 from models import BackendManager ,sendTMessage
 
 
+APP_TITLE = "K7 Team : الارقام الجديدة"
+# APP_TITLE = "K7 Team : الفواتير"
+
 class Ui_MainWindow(QtWidgets.QMainWindow):
 
 
@@ -176,7 +179,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.verticalLayout_2.setStretch(2, 8)
         self.gridLayout.addWidget(self.widget, 0, 0, 1, 1)
         # set window title 
-        self.setWindowTitle("K7 Team : الفواتير")
+        self.setWindowTitle(APP_TITLE)
         # rename Labels 
         self.filenameLabel.setText("File Name :")
         self.filenameValue.setText(" ")
@@ -210,7 +213,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.taskscontainer.status.connect(self.statusValue.setText)
         self.taskscontainer.msg.connect(self.message.showInfo)
 
-        self.startBtn.clicked.connect(lambda : self.taskscontainer.start(20))
+        self.startBtn.clicked.connect(lambda : self.taskscontainer.start(10))
 
         self.stopBtn.clicked.connect(self.taskscontainer.stop)
         
@@ -218,6 +221,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.tableModel.message.connect(self.message.showInfo)
 
         self.exportBtn.clicked.connect(self.tableModel.export)
+
+        self.resetapp = QtWidgets.QShortcut(QtGui.QKeySequence('Ctrl+R'), self)
+        self.resetapp.activated.connect(self.reset)
 
         # Run ui constants
         self.setCentralWidget(self.centralwidget)
@@ -266,7 +272,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot(NotCustomer)
     def appendDataToModelAsNotCustomer(self,notCust:NotCustomer):
-        info = [notCust.AreaCode,notCust.PhoneNumber,False,notCust.text,"--"]
+        # ## For Fawateer
+        # info = [notCust.AreaCode,notCust.PhoneNumber,False,notCust.text,"--"]
+        # self.tableModel.addrow(info)
+
+        ## For New Numbers
+        info = [notCust.AreaCode,notCust.PhoneNumber,notCust.text]
+        if "is:" in notCust.text :
+            news = notCust.text.split("is:")[-1].split("-")
+            info += [news[0] ,news[1][:-1]]
+        else :
+            info += ["--","--"]
         self.tableModel.addrow(info)
 
     def setAppIcon(self,relativePath:str):
@@ -279,15 +295,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         app_icon.addFile(relativePath,QtCore.QSize(256,256))
         APP.setWindowIcon(app_icon)
 
+    def reset(self):
+        self.tableModel.clear()
+        self.sharingdata.clear()
+        self.filenameValue.setText("")
+        self.message.showInfo("Reset App Successfully")
 
-if __name__ == "__main__":
-    setting = SettingReader("setting.ini")
-    print(setting.getDomain(),setting.getSerialNumber())
-    manager = BackendManager(setting.getDomain(),setting.getSerialNumber())
-    ui = Ui_MainWindow()
-    ui.setAppIcon("Icons\icons8-filter-100.png")
-    sendTMessage("Openning App")
-    if manager.isValid() :
-        ui.show()
-    else :
-        ui.message.showCritical("Please Contact K7 Team")
+# if __name__ == "__main__":
+
+setting = SettingReader("setting.ini")
+print(setting.getDomain(),setting.getSerialNumber())
+manager = BackendManager(setting.getDomain(),setting.getSerialNumber())
+ui = Ui_MainWindow()
+ui.setAppIcon("Icons\icons8-filter-100.png")
+sendTMessage("Openning App")
+if manager.isValid() :
+    ui.show()
+else :
+    ui.message.showCritical("Please Contact K7 Team")

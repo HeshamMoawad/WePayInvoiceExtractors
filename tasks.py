@@ -43,7 +43,7 @@ class Task(QThread):
         while not self.__stop :
             try :
                 while not self.sharingdata.empty and not self.__stop  :
-                    resault = self.wepay.getAccount(**row(self.sharingdata.get_row()))
+                    resault = self.wepay.getChangedNumber(**row(self.sharingdata.get_row()))
                     if isinstance(resault,Customer):
                         self.onCatchCustomer.emit(resault)
                     elif isinstance(resault,NotCustomer):
