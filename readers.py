@@ -9,7 +9,9 @@ import os
 
 # Constants
 COLUMNS = ['AreaCode','PhoneNumber']
-TABEL_MODEL_COLUMNS = COLUMNS + ["Server Message","New AreaCode","New PhoneNumber"]
+CHANGE_NUMBER_COLUMNS = ["Server Message","New AreaCode","New PhoneNumber"]
+GET_ACCOUNT_COLUMNS =  ["Have Account","Server Message","Invoice Price" , "Invoice Date"]#
+TABEL_MODEL_COLUMNS = COLUMNS + GET_ACCOUNT_COLUMNS
 
 
 

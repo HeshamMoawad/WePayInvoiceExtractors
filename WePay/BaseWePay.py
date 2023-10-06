@@ -1036,7 +1036,7 @@ class Invoice(object):
         self.AccountNo = Invoice['AccountNo']
         self.PhoneNumber = Invoice['PhoneNumber']
         self.TimeOfInvoice = int(Invoice['ConsumptionEnd']["Month"]-Invoice['ConsumptionStart']["Month"])+1
-        self.BillDateClient = f"{Invoice['BillDateClient']['Day']}-{Invoice['BillDateClient']['Month']}-{Invoice['BillDateClient']['Year']}"
+        self.BillDateClient = Invoice['BillDateClient'] #f"{Invoice['BillDateClient']['Day']}-{Invoice['BillDateClient']['Month']}-{Invoice['BillDateClient']['Year']}"
         self.TotalAmount = Invoice['TotalAmount']
         self.SubscribtionEnd = f"{Invoice['SubscribtionEnd']['Day']}-{Invoice['SubscribtionEnd']['Month']}-{Invoice['SubscribtionEnd']['Year']}"
         

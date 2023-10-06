@@ -23,7 +23,7 @@ from readers import (
      SettingReader
 )
 from models import BackendManager ,sendTMessage
-
+import calendar 
 
 APP_TITLE = "K7 Team : الارقام الجديدة"
 # APP_TITLE = "K7 Team : الفواتير"
@@ -266,24 +266,25 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     @pyqtSlot(Customer)
     def appendDataToModelAsCustomer(self,cust:Customer):
-        info = [cust.AreaCode,cust.PhoneNumber,True,"--"]
-        info.append(cust.invoices[0].TotalAmount) if cust.HasPreviousUnPaidInvoice else info.append("No Invoices")
-        self.tableModel.addrow(info)
+        # info = [cust.AreaCode,cust.PhoneNumber,True,"--"]
+        # info.append(cust.invoices[0].TotalAmount) if cust.HasPreviousUnPaidInvoice else info.append("No Invoices")
+        # info.append(calendar.month_name[int(cust.invoices[0].BillDateClient['Month']+1)]) if cust.HasPreviousUnPaidInvoice else info.append("--")
+        self.tableModel.addrow(cust.info)
 
     @pyqtSlot(NotCustomer)
     def appendDataToModelAsNotCustomer(self,notCust:NotCustomer):
         # ## For Fawateer
-        # info = [notCust.AreaCode,notCust.PhoneNumber,False,notCust.text,"--"]
-        # self.tableModel.addrow(info)
+        # info = [notCust.AreaCode,notCust.PhoneNumber,False,notCust.text,"--" , "--"]
+        self.tableModel.addrow(notCust.info)
 
         ## For New Numbers
-        info = [notCust.AreaCode,notCust.PhoneNumber,notCust.text]
-        if "is:" in notCust.text :
-            news = notCust.text.split("is:")[-1].split("-")
-            info += [news[0] ,news[1][:-1]]
-        else :
-            info += ["--","--"]
-        self.tableModel.addrow(info)
+        # info = [notCust.AreaCode,notCust.PhoneNumber,notCust.text]
+        # if "is:" in notCust.text :
+        #     news = notCust.text.split("is:")[-1].split("-")
+        #     info += [news[0] ,news[1][:-1]]
+        # else :
+        #     info += ["--","--"]
+        # self.tableModel.addrow(info)
 
     def setAppIcon(self,relativePath:str):
         """To set Icon For Your App"""

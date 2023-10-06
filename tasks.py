@@ -11,6 +11,7 @@ from qmodels import (
     SharingDataFrame
 )
 from WePay import Customer , NotCustomer , BaseWePay
+import calendar 
 
 
 def row(row)->dict:
@@ -43,11 +44,13 @@ class Task(QThread):
         while not self.__stop :
             try :
                 while not self.sharingdata.empty and not self.__stop  :
-                    resault = self.wepay.getChangedNumber(**row(self.sharingdata.get_row()))
+                    resault = self.wepay.getAccount(**row(self.sharingdata.get_row()))
                     if isinstance(resault,Customer):
-                        self.onCatchCustomer.emit(resault)
+                        self.customer(resault)
+                        #self.onCatchCustomer.emit(resault)
                     elif isinstance(resault,NotCustomer):
-                        self.onCatchNotCustomer.emit(resault)
+                        #self.onCatchNotCustomer.emit(resault)
+                        self.notCustomer(resault)
                     else :
                         print(resault)
                     if self.sharingdata.empty :
@@ -79,6 +82,18 @@ class Task(QThread):
         # self.wait()
         self.deleteLater()
 
+    def customer(self,cust:Customer):
+        info = [cust.AreaCode,cust.PhoneNumber,True,"--"]
+        info.append(cust.invoices[0].TotalAmount) if cust.HasPreviousUnPaidInvoice else info.append("No Invoices")
+        info.append(calendar.month_name[int(cust.invoices[0].BillDateClient['Month']+1)]) if cust.HasPreviousUnPaidInvoice else info.append("--")
+        cust.__setattr__("info",info)
+        self.onCatchCustomer.emit(cust)
+
+
+    def notCustomer(self,notCust:NotCustomer):
+        info = [notCust.AreaCode,notCust.PhoneNumber,False,notCust.text,"--" , "--"]
+        notCust.__setattr__("info",info)
+        self.onCatchNotCustomer.emit(notCust)
         
 class TasksContainer(QObject):
     status = pyqtSignal(str)
