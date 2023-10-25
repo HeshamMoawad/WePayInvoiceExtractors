@@ -25,8 +25,8 @@ from readers import (
 from models import BackendManager ,sendTMessage
 import calendar 
 
-APP_TITLE = "K7 Team : الارقام الجديدة"
-# APP_TITLE = "K7 Team : الفواتير"
+#APP_TITLE = "K7 Team : الارقام الجديدة"
+APP_TITLE = "K7 Team : الفواتير"
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
 
@@ -213,7 +213,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.taskscontainer.status.connect(self.statusValue.setText)
         self.taskscontainer.msg.connect(self.message.showInfo)
 
-        self.startBtn.clicked.connect(lambda : self.taskscontainer.start(10))
+        self.startBtn.clicked.connect(lambda : self.taskscontainer.start(12)) ##     threads count
 
         self.stopBtn.clicked.connect(self.taskscontainer.stop)
         

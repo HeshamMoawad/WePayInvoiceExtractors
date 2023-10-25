@@ -10,8 +10,8 @@ from qmodels import (
     typing ,
     SharingDataFrame
 )
-from WePay import Customer , NotCustomer , BaseWePay
-import calendar 
+from WePay import Customer , NotCustomer , BaseWePay 
+import calendar , requests
 
 
 def row(row)->dict:
@@ -59,9 +59,14 @@ class Task(QThread):
                 print(ce)
                 if not self.checker.isConnect() :
                     self.__stop = True
+            except requests.exceptions.ConnectionError as rce :
+                print(ce)
+                if not self.checker.isConnect() :
+                    self.__stop = True
             except Exception as e :
                 print(e)
-                self.__stop = True
+                if not self.checker.isConnect() :
+                    self.__stop = True
 
 
     def __str__(self) -> str:
@@ -120,7 +125,8 @@ class TasksContainer(QObject):
                 for _ in range(max):
                     print(f"Running {_}")
                     task = Task(self , self.sharingdata)
-                    task.finished.connect(lambda : self.status.emit("OFF "))
+                    task.finished.connect(lambda : self.status.emit("OFF ") if self.sharingdata.empty else None)
+                    task.finished.connect(lambda : print(f"task ended {task}"))
                     task.onCatchCustomer.connect(self.onCatchCustomer.emit)
                     task.onCatchNotCustomer.connect(self.onCatchNotCustomer.emit)
                     self.__tasks.append(task)
@@ -134,8 +140,11 @@ class TasksContainer(QObject):
 
     def stop(self):
         for task in self.__tasks : task.delete()
-        self.__tasks.clear()       
+        self.__tasks.clear()
         self.status.emit("OFF ")
 
     def isRunning(self):
         return True if len(self.__tasks) > 0 else False
+
+    # def checkStopped(self): 
+    #     if  : self.status.emit("OFF ")
